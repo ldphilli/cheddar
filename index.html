@@ -1,11 +1,24 @@
 <html>
   <head>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
   </head>
   <body>
+    <div id="app">
+      {{ message }}
+    </div>
+    <script>
+      var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+    </script>
     <form>
       <h2>Sign-in</h2>
-      <input type=“text” placeholder=“email” />
-      <input type=“text” placeholder=“password” />
+      <input v-model="message" placeholder="email">
+      <input type=text placeholder=password />
       <button>Sign in</button>
     </form>
     <button =name=“addStock”>Add stock</button>
