@@ -2,15 +2,70 @@
 
 <PageTitle>Budget</PageTitle>
 
-<h1>Counter</h1>
+<h1>Budget</h1>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-xl-4 offset-lg-3 offset-xl-4">
+            <RadzenCard class="m-3">
+                <h3 class="h5">Monthly budget spend</h3>
+            </RadzenCard>
+        </div>
+        <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+            <RadzenChart>
+                <RadzenPieSeries Data="@expenditureByCategoriesWithRemaining" Title="Revenue" CategoryProperty="Category" ValueProperty="Amount" />
+            </RadzenChart>
+        </div>
+    </div>
+</div>
+
+<RadzenButton Text="Add New Budget Line" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
+    public double Income = 3773.89;
+
+    List<DataItem> expenditureByCategoriesWithRemaining = new List<DataItem> {
+        new DataItem
+        {
+            Category = "Debt",
+            Amount = 366
+        },
+        new DataItem
+        {
+            Category = "Entertainment",
+            Amount = 43.68
+        },
+        new DataItem
+        {
+            Category = "Health",
+            Amount = 11.3
+        },
+        new DataItem
+        {
+            Category = "Business",
+            Amount = 11.4
+        },
+        new DataItem
+        {
+            Category = "Utility",
+            Amount = 1046.40
+        },
+        
+    };
+
+    protected override void OnInitialized() {
+        expenditureByCategoriesWithRemaining.Add(
+            new DataItem
+            {
+                Category = "Remaining",
+                Amount = expenditureByCategoriesWithRemaining.Sum(item => item.Amount)
+            }
+        );
+    }
+
+    class DataItem {
+        public string Category { get; set; }
+        public double Amount { get; set; }
     }
 }
