@@ -25,36 +25,39 @@
 
     public double Income = 3773.89;
 
-    List<DataItem> expenditureByCategoriesWithRemaining = new List<DataItem> {
+    List<DataItem> expenditureByCategoriesWithRemaining;
+
+    protected override void OnInitialized() {
+
+    expenditureByCategoriesWithRemaining = new List<DataItem> {
         new DataItem
         {
             Category = "Debt",
-            Amount = 366
+            Amount = Math.Round((366 / Income) * 100, 2)
         },
         new DataItem
         {
             Category = "Entertainment",
-            Amount = 43.68
+            Amount = Math.Round((43.68 / Income) * 100, 2)
         },
         new DataItem
         {
             Category = "Health",
-            Amount = 11.3
+            Amount = Math.Round((11.3 / Income) * 100, 2)
         },
         new DataItem
         {
             Category = "Business",
-            Amount = 11.4
+            Amount = Math.Round((11.4 / Income) * 100, 2)
         },
         new DataItem
         {
             Category = "Utility",
-            Amount = 1046.40
+            Amount = Math.Round((1046.40 / Income) * 100, 2)
         },
         
     };
 
-    protected override void OnInitialized() {
         expenditureByCategoriesWithRemaining.Add(
             new DataItem
             {
