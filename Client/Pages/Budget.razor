@@ -9,6 +9,7 @@
         <div class="col-lg-6 col-xl-4 offset-lg-3 offset-xl-4">
             <RadzenCard class="m-3">
                 <h3 class="h5">Monthly budget spend</h3>
+                <b>£1478.78</b>
             </RadzenCard>
         </div>
         <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
@@ -21,9 +22,33 @@
 
 <RadzenButton Text="Add New Budget Line" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 
+<div class="row px-3">
+    <div class="col-md-6 col-lg-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Apple Music</h4>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Monthly Cost</h4>
+            <RadzenTextBox Placeholder="£14.99" />
+        </RadzenCard>
+    </div>
+    <div class="col-lg-6 col-xl-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Contract End Date</h4>
+            <RadzenDatePicker @bind-Value=@contractEndDate DateFormat="d" />
+        </RadzenCard>
+    </div>
+</div>
+
+
+
 @code {
 
     public double Income = 3773.89;
+    DateTime? contractEndDate = DateTime.Now;
 
     List<DataItem> expenditureByCategoriesWithRemaining;
 
