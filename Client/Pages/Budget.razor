@@ -25,7 +25,7 @@
 <div class="row px-3">
     <div class="col-md-6 col-lg-4 p-3">
         <RadzenCard>
-            <h4 class="mb-4">Apple Music</h4>
+            <h4 class="mb-4">Budget Line Item Name</h4>
             <RadzenTextBox Placeholder="Apple Music" />
         </RadzenCard>
     </div>
@@ -33,6 +33,20 @@
         <RadzenCard>
             <h4 class="mb-4">Monthly Cost</h4>
             <RadzenTextBox Placeholder="£14.99" />
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Category</h4>
+            <RadzenDropDown TValue="ItemCategory" Class="w-100" 
+                            Data=@itemCategories TextProperty="ItemCategoryName"/>
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Payment Methods</h4>
+            <RadzenDropDown AllowClear="true" TValue="PaymentMethod" Class="w-100" 
+                            Data=@paymentMethods TextProperty="PaymentMethodName"/>
         </RadzenCard>
     </div>
     <div class="col-lg-6 col-xl-4 p-3">
@@ -51,37 +65,39 @@
     DateTime? contractEndDate = DateTime.Now;
 
     List<DataItem> expenditureByCategoriesWithRemaining;
+    List<PaymentMethod> paymentMethods;
+    List<ItemCategory> itemCategories;
 
     protected override void OnInitialized() {
 
-    expenditureByCategoriesWithRemaining = new List<DataItem> {
-        new DataItem
-        {
-            Category = "Debt",
-            Amount = Math.Round((366 / Income) * 100, 2)
-        },
-        new DataItem
-        {
-            Category = "Entertainment",
-            Amount = Math.Round((43.68 / Income) * 100, 2)
-        },
-        new DataItem
-        {
-            Category = "Health",
-            Amount = Math.Round((11.3 / Income) * 100, 2)
-        },
-        new DataItem
-        {
-            Category = "Business",
-            Amount = Math.Round((11.4 / Income) * 100, 2)
-        },
-        new DataItem
-        {
-            Category = "Utility",
-            Amount = Math.Round((1046.40 / Income) * 100, 2)
-        },
-        
-    };
+        expenditureByCategoriesWithRemaining = new List<DataItem> {
+            new DataItem
+            {
+                Category = "Debt",
+                Amount = Math.Round((366 / Income) * 100, 2)
+            },
+            new DataItem
+            {
+                Category = "Entertainment",
+                Amount = Math.Round((43.68 / Income) * 100, 2)
+            },
+            new DataItem
+            {
+                Category = "Health",
+                Amount = Math.Round((11.3 / Income) * 100, 2)
+            },
+            new DataItem
+            {
+                Category = "Business",
+                Amount = Math.Round((11.4 / Income) * 100, 2)
+            },
+            new DataItem
+            {
+                Category = "Utility",
+                Amount = Math.Round((1046.40 / Income) * 100, 2)
+            },
+            
+        };
 
         expenditureByCategoriesWithRemaining.Add(
             new DataItem
@@ -90,10 +106,64 @@
                 Amount = expenditureByCategoriesWithRemaining.Sum(item => item.Amount)
             }
         );
+
+        paymentMethods = new List<PaymentMethod> {
+            new PaymentMethod
+            {
+                PaymentMethodName = "American Express",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Paypal",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Lloyds",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Starling",
+            },
+        };
+
+        itemCategories = new List<ItemCategory> {
+            new ItemCategory
+            {
+                ItemCategoryName = "Business",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Debt",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Entertainment",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Health",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Remaining",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Utility",
+            },
+        };
     }
 
     class DataItem {
         public string Category { get; set; }
         public double Amount { get; set; }
+    }
+
+    class PaymentMethod {
+        public string PaymentMethodName { get; set; }
+    }
+
+    class ItemCategory {
+        public string ItemCategoryName { get; set; }
     }
 }
