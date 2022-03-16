@@ -2,7 +2,7 @@
 
 <PageTitle>Budget</PageTitle>
 
-<h1>Budget</h1>
+<h2 class="font-family">Summary</h2>
 
 <div class="container">
     <div class="row">
@@ -20,7 +20,20 @@
     </div>
 </div>
 
-<RadzenButton Text="Add New Budget Line" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+<RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+
+<h2>Budget line items</h2>
+
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+        Data="@budgetLineItems" TItem="BudgetLine" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="BudgetLine" Property="LineItemName" Filterable="false" Title="Line Item Name" Frozen="true" Width="70px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="BudgetLine" Property="Cost" Title="Cost" Frozen="true" Width="140px"  />
+            <RadzenDataGridColumn TItem="BudgetLine" Property="Category" Title="Category" Width="140px" />
+            <RadzenDataGridColumn TItem="BudgetLine" Property="PaymentMethod" Title="Payment Method" Width="140px"/>
+            <RadzenDataGridColumn TItem="BudgetLine" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
+        </Columns>
+    </RadzenDataGrid>
 
 <div class="row px-3">
     <div class="col-md-6 col-lg-4 p-3">
@@ -67,6 +80,7 @@
     List<DataItem> expenditureByCategoriesWithRemaining;
     List<PaymentMethod> paymentMethods;
     List<ItemCategory> itemCategories;
+    List<BudgetLine> budgetLineItems;
 
     protected override void OnInitialized() {
 
@@ -152,6 +166,17 @@
                 ItemCategoryName = "Utility",
             },
         };
+
+        budgetLineItems = new List<BudgetLine> {
+            new BudgetLine
+            {
+                LineItemName = "Apple Music",
+                Cost = "£14.99",
+                Category = "Entertainment",
+                PaymentMethod = "American Express",
+                ContractEndDate = "Rolling month",
+            },
+        };
     }
 
     class DataItem {
@@ -165,5 +190,13 @@
 
     class ItemCategory {
         public string ItemCategoryName { get; set; }
+    }
+
+    class BudgetLine {
+        public string LineItemName { get; set; }
+        public string Cost { get; set; }
+        public string Category { get; set; }
+        public string PaymentMethod { get; set; }
+        public string ContractEndDate { get; set; }
     }
 }

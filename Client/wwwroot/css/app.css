@@ -8,6 +8,10 @@ h1:focus {
     outline: none;
 }
 
+.font-family {
+    font-family: 'Poppins';
+}
+
 a, .btn-link {
     color: #0077cc;
 }
