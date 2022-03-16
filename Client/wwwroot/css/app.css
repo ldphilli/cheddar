@@ -12,6 +12,10 @@ h1:focus {
     font-family: 'Poppins';
 }
 
+.h2-font-weight {
+    font-weight: 700;
+}
+
 a, .btn-link {
     color: #0077cc;
 }

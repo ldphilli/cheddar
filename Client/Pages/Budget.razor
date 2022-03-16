@@ -1,85 +1,47 @@
 ﻿@page "/budget"
+@inject NavigationManager NavManager
 
 <PageTitle>Budget</PageTitle>
 
-<h2 class="font-family">Summary</h2>
-
-<div class="container">
+<div class="fluid-container">
+    <h2 class="font-family h2-font-weight">Summary</h2>
     <div class="row">
-        <div class="col-lg-6 col-xl-4 offset-lg-3 offset-xl-4">
+        <div class="col-lg-6 col-xl-4">
             <RadzenCard class="m-3">
                 <h3 class="h5">Monthly budget spend</h3>
                 <b>£1478.78</b>
             </RadzenCard>
         </div>
-        <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+        <div class="col-sm-12 col-lg-6 my-5">
             <RadzenChart>
                 <RadzenPieSeries Data="@expenditureByCategoriesWithRemaining" Title="Revenue" CategoryProperty="Category" ValueProperty="Amount" />
             </RadzenChart>
         </div>
     </div>
-</div>
-
-<RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-
-<h2>Budget line items</h2>
-
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-        Data="@budgetLineItems" TItem="BudgetLine" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="BudgetLine" Property="LineItemName" Filterable="false" Title="Line Item Name" Frozen="true" Width="70px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="BudgetLine" Property="Cost" Title="Cost" Frozen="true" Width="140px"  />
-            <RadzenDataGridColumn TItem="BudgetLine" Property="Category" Title="Category" Width="140px" />
-            <RadzenDataGridColumn TItem="BudgetLine" Property="PaymentMethod" Title="Payment Method" Width="140px"/>
-            <RadzenDataGridColumn TItem="BudgetLine" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
-        </Columns>
-    </RadzenDataGrid>
-
-<div class="row px-3">
-    <div class="col-md-6 col-lg-4 p-3">
-        <RadzenCard>
-            <h4 class="mb-4">Budget Line Item Name</h4>
-            <RadzenTextBox Placeholder="Apple Music" />
-        </RadzenCard>
+    <div class="row">
+        <h2 class="font-family h2-font-weight col-xl-3">Budget line items</h2>
+        <RadzenButton class="col-xl-1" Click="@AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
-    <div class="col-md-6 col-lg-4 p-3">
-        <RadzenCard>
-            <h4 class="mb-4">Monthly Cost</h4>
-            <RadzenTextBox Placeholder="£14.99" />
-        </RadzenCard>
-    </div>
-    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-        <RadzenCard>
-            <h4 class="mb-4">Category</h4>
-            <RadzenDropDown TValue="ItemCategory" Class="w-100" 
-                            Data=@itemCategories TextProperty="ItemCategoryName"/>
-        </RadzenCard>
-    </div>
-    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-        <RadzenCard>
-            <h4 class="mb-4">Payment Methods</h4>
-            <RadzenDropDown AllowClear="true" TValue="PaymentMethod" Class="w-100" 
-                            Data=@paymentMethods TextProperty="PaymentMethodName"/>
-        </RadzenCard>
-    </div>
-    <div class="col-lg-6 col-xl-4 p-3">
-        <RadzenCard>
-            <h4 class="mb-4">Contract End Date</h4>
-            <RadzenDatePicker @bind-Value=@contractEndDate DateFormat="d" />
-        </RadzenCard>
+    <div class="row">
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+            Data="@budgetLineItems" TItem="BudgetLine" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="BudgetLine" Property="LineItemName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="BudgetLine" Property="Cost" Title="Cost" Width="140px"  />
+                <RadzenDataGridColumn TItem="BudgetLine" Property="Category" Title="Category" Width="140px" />
+                <RadzenDataGridColumn TItem="BudgetLine" Property="PaymentMethod" Title="Payment Method" Width="140px"/>
+                <RadzenDataGridColumn TItem="BudgetLine" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
+            </Columns>
+        </RadzenDataGrid>
     </div>
 </div>
-
 
 
 @code {
 
     public double Income = 3773.89;
-    DateTime? contractEndDate = DateTime.Now;
 
     List<DataItem> expenditureByCategoriesWithRemaining;
-    List<PaymentMethod> paymentMethods;
-    List<ItemCategory> itemCategories;
     List<BudgetLine> budgetLineItems;
 
     protected override void OnInitialized() {
@@ -121,52 +83,6 @@
             }
         );
 
-        paymentMethods = new List<PaymentMethod> {
-            new PaymentMethod
-            {
-                PaymentMethodName = "American Express",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Paypal",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Lloyds",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Starling",
-            },
-        };
-
-        itemCategories = new List<ItemCategory> {
-            new ItemCategory
-            {
-                ItemCategoryName = "Business",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Debt",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Entertainment",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Health",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Remaining",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Utility",
-            },
-        };
-
         budgetLineItems = new List<BudgetLine> {
             new BudgetLine
             {
@@ -179,17 +95,13 @@
         };
     }
 
+    public void AddNewBudgetItem() {
+        NavManager.NavigateTo("/newbudgetlineitem");
+    }
+
     class DataItem {
         public string Category { get; set; }
         public double Amount { get; set; }
-    }
-
-    class PaymentMethod {
-        public string PaymentMethodName { get; set; }
-    }
-
-    class ItemCategory {
-        public string ItemCategoryName { get; set; }
     }
 
     class BudgetLine {

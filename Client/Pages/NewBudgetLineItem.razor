@@ -1,0 +1,102 @@
+@page "/newbudgetlineitem"
+
+<PageTitle>New Budget Line Item</PageTitle>
+
+<div class="row px-3">
+    <div class="col-md-6 col-lg-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Budget Line Item Name</h4>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Monthly Cost</h4>
+            <RadzenTextBox Placeholder="£14.99" />
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Category</h4>
+            <RadzenDropDown TValue="ItemCategory" Class="w-100" 
+                            Data=@itemCategories TextProperty="ItemCategoryName"/>
+        </RadzenCard>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Payment Methods</h4>
+            <RadzenDropDown AllowClear="true" TValue="PaymentMethod" Class="w-100" 
+                            Data=@paymentMethods TextProperty="PaymentMethodName"/>
+        </RadzenCard>
+    </div>
+    <div class="col-lg-6 col-xl-4 p-3">
+        <RadzenCard>
+            <h4 class="mb-4">Contract End Date</h4>
+            <RadzenDatePicker @bind-Value=@contractEndDate DateFormat="d" />
+        </RadzenCard>
+    </div>
+</div>
+
+
+@code {
+    List<PaymentMethod> paymentMethods;
+    List<ItemCategory> itemCategories;
+    DateTime? contractEndDate = DateTime.Now;
+
+    protected override void OnInitialized() {
+
+        paymentMethods = new List<PaymentMethod> {
+            new PaymentMethod
+            {
+                PaymentMethodName = "American Express",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Paypal",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Lloyds",
+            },
+            new PaymentMethod
+            {
+                PaymentMethodName = "Starling",
+            },
+        };
+
+        itemCategories = new List<ItemCategory> {
+            new ItemCategory
+            {
+                ItemCategoryName = "Business",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Debt",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Entertainment",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Health",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Remaining",
+            },
+            new ItemCategory
+            {
+                ItemCategoryName = "Utility",
+            },
+        };
+    }
+
+    class PaymentMethod {
+        public string PaymentMethodName { get; set; }
+    }
+
+    class ItemCategory {
+        public string ItemCategoryName { get; set; }
+    }
+}
