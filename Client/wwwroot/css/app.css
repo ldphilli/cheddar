@@ -8,11 +8,11 @@ h1:focus {
     outline: none;
 }
 
-.font-family {
+.font {
     font-family: 'Poppins';
 }
 
-.h2-font-weight {
+.bold {
     font-weight: 700;
 }
 

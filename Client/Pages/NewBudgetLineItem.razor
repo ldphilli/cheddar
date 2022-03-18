@@ -1,4 +1,5 @@
 @page "/newbudgetlineitem"
+@inject NavigationManager NavManager
 
 <PageTitle>New Budget Line Item</PageTitle>
 
@@ -35,6 +36,7 @@
             <RadzenDatePicker @bind-Value=@contractEndDate DateFormat="d" />
         </RadzenCard>
     </div>
+    <RadzenButton class="col-xl-3" Click="@SubmitNewBudgetItem" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
 
@@ -90,6 +92,10 @@
                 ItemCategoryName = "Utility",
             },
         };
+    }
+
+    public void SubmitNewBudgetItem() {        
+        NavManager.NavigateTo("/budget");
     }
 
     class PaymentMethod {
