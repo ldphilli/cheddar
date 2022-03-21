@@ -12,8 +12,16 @@ h1:focus {
     font-family: 'Poppins';
 }
 
+.white-heading {
+    color: #f5f5f5;
+}
+
 .bold {
     font-weight: 700;
+}
+
+.btn-primary {
+    background-color: #6419E6 !important;
 }
 
 a, .btn-link {

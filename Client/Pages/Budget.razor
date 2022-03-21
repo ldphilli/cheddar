@@ -4,23 +4,27 @@
 <PageTitle>Budget</PageTitle>
 
 <div class="fluid-container">
-    <h2 class="font bold">Summary</h2>
+    <h2 class="font bold white-heading">Summary</h2>
     <div class="row">
-        <div class="col-lg-6 col-xl-4">
+        <div class="col-lg-6 col-xl-3">
             <RadzenCard class="m-3">
-                <h3 class="h5">Monthly budget spend</h3>
-                <b>£1478.78</b>
+                <h3 class="bold">£3000.00</h3>
+                <p class="font">Last months income</p>
+            </RadzenCard>
+            <RadzenCard class="m-3">
+                <h3 class="bold">£1478.78</h3>
+                <p class="font">Monthly budget spend</p>
             </RadzenCard>
         </div>
-        <div class="col-sm-12 col-lg-6 my-5">
+        <div class="col-sm-12 col-lg-6 col-xl-3 my-5">
             <RadzenChart>
                 <RadzenPieSeries Data="@expenditureByCategoriesWithRemaining" Title="Revenue" CategoryProperty="Category" ValueProperty="Amount" />
             </RadzenChart>
         </div>
     </div>
     <div class="row">
-        <h2 class="font bold col-xl-3">Budget line items</h2>
-        <RadzenButton class="col-xl-1" Click="@AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
+        <RadzenButton class="col-xl-1 btn-primary" Click="@AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
