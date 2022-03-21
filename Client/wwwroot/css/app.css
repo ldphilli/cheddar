@@ -24,6 +24,10 @@ h1:focus {
     background-color: #6419E6 !important;
 }
 
+.crd-primary {
+    background-color: #191D24 !important;
+}
+
 a, .btn-link {
     color: #0077cc;
 }
