@@ -12,6 +12,13 @@
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:azureFunctions.pickProcess}"
+    },
+    {
+      "name": "Launch and Debug",
+      "type": "blazorwasm",
+      "request": "launch",
+      "url": "https://localhost:5000",
+      "browser": "edge"
     }
   ],
   "compounds": [
