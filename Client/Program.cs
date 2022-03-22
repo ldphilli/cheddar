@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorApp.Client;
 using Azure.Cosmos;
+using Cheddar.Client.Models;
+using Cheddar.Client.ViewModels;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -12,6 +14,9 @@ const string AuthorizationKey = "uKehVT4myAIG69BAYyLZOzHlxLh4Wx0JotaD0OQeg54lrcs
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["API_Prefix"] ?? builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSingleton(sp => new CosmosClient(EndpointUrl, AuthorizationKey));
+//builder.Services.AddSingleton(sp => new BudgetLineItemVM());
+builder.Services.AddScoped<BudgetLineItemModel>();
+builder.Services.AddTransient<BudgetLineItemVM>();
 
 await builder.Build().RunAsync();
 
