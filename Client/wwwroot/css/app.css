@@ -28,6 +28,11 @@ h1:focus {
     background-color: #191D24 !important;
 }
 
+.rz-legend-item-text {
+    color: #f5f5f5 !important;
+    font-family: 'Poppins' !important;
+}
+
 a, .btn-link {
     color: #0077cc;
 }
