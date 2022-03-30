@@ -2,16 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-        "name": "Launch and Debug Standalone Blazor WebAssembly App",
-        "type": "blazorwasm",
-        "request": "launch",
-        "cwd": "${workspaceFolder}/Client"
-    },
-    {
-      "name": "Attach to .NET Functions",
-      "type": "coreclr",
-      "request": "attach",
-      "processId": "${command:azureFunctions.pickProcess}"
+      "name": "Launch and Debug Standalone Blazor WebAssembly App",
+      "type": "blazorwasm",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/Client"
     },
     {
       "name": "Launch and Debug",
@@ -19,6 +13,12 @@
       "request": "launch",
       "url": "https://localhost:5000",
       "browser": "edge"
+    },
+    {
+      "name": "Attach to .NET Functions",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:azureFunctions.pickProcess}"
     }
   ],
   "compounds": [

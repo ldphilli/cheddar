@@ -19,7 +19,7 @@ namespace Cheddar.Client.ViewModels {
         /// Add BudgetLineItem items to the container
         /// </summary>
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem) {
-            HttpyClient client = new HttpClient();
+            HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/CreateBudgetLineItem";
             await client.PostAsJsonAsync(url, budgetLineItem);
         }

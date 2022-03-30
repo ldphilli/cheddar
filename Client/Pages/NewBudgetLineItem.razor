@@ -2,6 +2,7 @@
 @inject NavigationManager NavManager
 @using Cheddar.Client.ViewModels
 @inject BudgetLineItemVM BudgetLineViewModel
+@inject BudgetVM budget
 
 <PageTitle>New Budget Line Item</PageTitle>
 
@@ -9,33 +10,33 @@
     <div class="col-md-6 col-lg-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Budget Line Item Name</h4>
-            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@BudgetLineViewModel.BudgetLineName" />
+            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@BudgetLineViewModel.bliModel.BudgetLineName" />
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Monthly Cost</h4>
-            <RadzenTextBox Placeholder="14.99" />
+            <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@BudgetLineViewModel.bliModel.Cost" />
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">
         <RadzenCard>
             <h4 class="mb-4">Category</h4>
             <RadzenDropDown Class="w-100" 
-                            Data=@itemCategories @bind-Value="@BudgetLineViewModel.Category"/>
+                            Data=@itemCategories @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">
         <RadzenCard>
             <h4 class="mb-4">Payment Methods</h4>
             <RadzenDropDown AllowClear="true" Class="w-100" 
-                            Data=@paymentMethods @bind-Value="@BudgetLineViewModel.PaymentMethod"/>
+                            Data=@paymentMethods @bind-Value="@BudgetLineViewModel.bliModel.PaymentMethod"/>
         </RadzenCard>
     </div>
     <div class="col-lg-6 col-xl-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Contract End Date</h4>
-            <RadzenDatePicker @bind-Value=@contractEndDate DateFormat="d" @bind-Value="@BudgetLineViewModel.ContractEndDate" />
+            <RadzenDatePicker DateFormat="d" @bind-Value="@BudgetLineViewModel.bliModel.ContractEndDate" />
         </RadzenCard>
     </div>
     <RadzenButton class="col-xl-3" Click="@SubmitNewBudgetItem" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
@@ -45,69 +46,13 @@
 @code {
     List<string> paymentMethods = new List<string>() { "American Express", "Paypal", "Lloyds", "Starling" };
     List<string> itemCategories = new List<string>() { "Business", "Debt", "Entertainment", "Health", "Remaining", "Utility" };
-    DateTime? contractEndDate = DateTime.Now;
 
     protected override void OnInitialized() {
 
-        /*paymentMethods = new List<PaymentMethod> {
-            new PaymentMethod
-            {
-                PaymentMethodName = "American Express",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Paypal",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Lloyds",
-            },
-            new PaymentMethod
-            {
-                PaymentMethodName = "Starling",
-            },
-        };
-
-        itemCategories = new List<ItemCategory> {
-            new ItemCategory
-            {
-                ItemCategoryName = "Business",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Debt",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Entertainment",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Health",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Remaining",
-            },
-            new ItemCategory
-            {
-                ItemCategoryName = "Utility",
-            },
-        };*/
     }
 
     public void SubmitNewBudgetItem() {
-        Console.WriteLine(BudgetLineViewModel.BudgetLineName);
-        Console.WriteLine(BudgetLineViewModel.PaymentMethod);
-        Console.WriteLine(BudgetLineViewModel.Category);
+        budget.AddItemsToContainerAsync(BudgetLineViewModel.bliModel);
         NavManager.NavigateTo("/budget");
     }
-
-    /*class PaymentMethod {
-        public string PaymentMethodName { get; set; }
-    }
-
-    class ItemCategory {
-        public string ItemCategoryName { get; set; }
-    }*/
 }

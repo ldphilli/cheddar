@@ -14,9 +14,9 @@ const string AuthorizationKey = "uKehVT4myAIG69BAYyLZOzHlxLh4Wx0JotaD0OQeg54lrcs
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["API_Prefix"] ?? builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSingleton(sp => new CosmosClient(EndpointUrl, AuthorizationKey));
-//builder.Services.AddSingleton(sp => new BudgetLineItemVM());
 builder.Services.AddScoped<BudgetLineItemModel>();
 builder.Services.AddTransient<BudgetLineItemVM>();
+builder.Services.AddTransient<BudgetVM>();
 
 await builder.Build().RunAsync();
 
