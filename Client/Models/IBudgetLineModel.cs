@@ -1,6 +1,4 @@
-using System.Text.Json;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace Cheddar.Client.Models {
     public class BudgetLineItemModel {

@@ -7,7 +7,7 @@ namespace Cheddar.Client.ViewModels {
         {
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
-            bliModel.BLIid = "budget-line-item-2";
+            bliModel.BLIid = String.Concat(bliModel.BudgetLineName, "- 1");
         }
     }
 }
