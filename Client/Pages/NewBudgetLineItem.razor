@@ -39,7 +39,7 @@
             <RadzenDatePicker DateFormat="d" @bind-Value="@BudgetLineViewModel.bliModel.ContractEndDate" />
         </RadzenCard>
     </div>
-    <RadzenButton class="col-xl-3" Click="@(() => budget.AddItemsToContainerAsync(BudgetLineViewModel.bliModel))" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton class="col-xl-3" Click="@(() => budget.AddItemsToContainerAsync(BudgetLineViewModel.bliModel, NavManager))" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
 
