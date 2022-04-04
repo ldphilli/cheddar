@@ -4,7 +4,7 @@ namespace Cheddar.Client.Models {
     public class BudgetLineItemModel {
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
-        public string BLIid { get; set; }
+        public int UserId { get; set; }
         public string BudgetLineName { get; set; }
         public double Cost { get; set; }
         public string Category { get; set; }

@@ -34,13 +34,13 @@ namespace Cheddar.Function
             try
             {
                 // Read the item to see if it exists.  
-                ItemResponse<BudgetLineItemModel> newBudgetLineItemResponse = await container.ReadItemAsync<BudgetLineItemModel>(budgetLineItem.Id, new PartitionKey(budgetLineItem.BLIid));
+                ItemResponse<BudgetLineItemModel> newBudgetLineItemResponse = await container.ReadItemAsync<BudgetLineItemModel>(budgetLineItem.Id, new PartitionKey(budgetLineItem.UserId));
                 Console.WriteLine("Item in database with id: {0} already exists\n", newBudgetLineItemResponse.Resource.Id);
             }
             catch(Exception ex) //when (ex.Status == (int)HttpStatusCode.NotFound)
             {
                 // Create an item in the container representing the Andersen family. Note we provide the value of the partition key for this item, which is "Andersen"
-                ItemResponse<BudgetLineItemModel> newBudgetLineItemResponse = await container.CreateItemAsync<BudgetLineItemModel>(budgetLineItem, new PartitionKey(budgetLineItem.BLIid));
+                ItemResponse<BudgetLineItemModel> newBudgetLineItemResponse = await container.CreateItemAsync<BudgetLineItemModel>(budgetLineItem, new PartitionKey(budgetLineItem.UserId));
                 // Note that after creating the item, we can access the body of the item with the Resource property off the ItemResponse.
                 Console.WriteLine("Created item in database with id: {0}\n", newBudgetLineItemResponse.Resource.Id);
             }

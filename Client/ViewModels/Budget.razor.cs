@@ -14,6 +14,12 @@ namespace Cheddar.Client.ViewModels {
             await client.PostAsJsonAsync(url, budgetLineItem);
             nvm.NavigateTo("/budget");
         }
+
+        public async Task GetBudgetLineItems()
+        {
+            HttpClient client = new HttpClient();
+            var url = "http://localhost:7071/api/GetBudgetLineItems";
+        }
     }
 }
 
