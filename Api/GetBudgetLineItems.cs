@@ -39,7 +39,7 @@ namespace Cheddar.Function
             Container container = cosmosClient.GetContainer(DatabaseId, ContainerId);
             try
             {
-                List<BudgetLineItemModel> budgetLineItems = new List<BudgetLineItemModel>();
+                //List<BudgetLineItemModel> budgetLineItems = new List<BudgetLineItemModel>();
                 //IReadOnlyList<FeedRange> feedRanges = await container.GetFeedRangesAsync();
                 var queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
                 .WithParameter("@userId", 1);
@@ -104,10 +104,9 @@ namespace Cheddar.Function
                         if (responseMessage.IsSuccessStatusCode)
                         {
                             dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<BudgetLineItemModel> salesOrders = streamResponse.Documents.ToObject<List<BudgetLineItemModel>>();
-                            Console.WriteLine($"\n1.3.3 - Read all items via stream {salesOrders.Count}");
-                            budgetLineItems.AddRange(salesOrders);
-                            Console.WriteLine(salesOrders.First().BudgetLineName);
+                            List<BudgetLineItemModel> budgetLineItems = streamResponse.Documents.ToObject<List<BudgetLineItemModel>>();
+                            Console.WriteLine($"\n1.3.3 - Read all items via stream {budgetLineItems.Count}");
+                            allBudgetLineItemsForUser.AddRange(budgetLineItems);
                         }
                         else
                         {
@@ -117,11 +116,8 @@ namespace Cheddar.Function
                 }
 
                 Console.WriteLine($"\n1.3.4 Read all items found {allBudgetLineItemsForUser.Count} items.");
-
-                if (budgetLineItems.Count != allBudgetLineItemsForUser.Count)
-                {
-                    throw new InvalidDataException($"Both read all item operations should return the same list");
-                }
+                Console.WriteLine(allBudgetLineItemsForUser.First().BudgetLineName);
+                return new OkObjectResult(allBudgetLineItemsForUser);
             }
             catch(Exception ex) //when (ex.Status == (int)HttpStatusCode.NotFound)
             {

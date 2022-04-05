@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
+using System.Linq;
 using Cheddar.Client.Models;
 
 namespace Cheddar.Client.ViewModels {
@@ -19,8 +20,8 @@ namespace Cheddar.Client.ViewModels {
         {
             HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/GetBudgetLineItems";
-            var budgetLineItems = await client.GetStreamAsync(url);
-            Console.WriteLine(budgetLineItems);
+            List<BudgetLineItemModel>? budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
+            Console.WriteLine(budgetLineItems.First().BudgetLineName);
         }
     }
 }
