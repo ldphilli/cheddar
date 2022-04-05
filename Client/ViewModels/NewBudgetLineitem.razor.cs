@@ -7,7 +7,7 @@ namespace Cheddar.Client.ViewModels {
         {
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
-            bliModel.UserId = 1;
+            bliModel.UserId = 2;
         }
     }
 }

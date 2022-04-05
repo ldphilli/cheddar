@@ -19,6 +19,8 @@ namespace Cheddar.Client.ViewModels {
         {
             HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/GetBudgetLineItems";
+            var budgetLineItems = await client.GetStreamAsync(url);
+            Console.WriteLine(budgetLineItems);
         }
     }
 }
