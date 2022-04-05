@@ -7,7 +7,7 @@ namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
-        public List<string> budgetCategories = new List<string>();
+        public List<string>? budgetCategories = new List<string>();
         /// <summary>
         /// Add BudgetLineItem items to the container
         /// </summary>
@@ -23,11 +23,22 @@ namespace Cheddar.Client.ViewModels {
             HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/GetBudgetLineItems";
             budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
-            //budgetCategories = budgetLineItems.Select(item => item.Category).Distinct();
+            budgetCategories = budgetLineItems.Select(item => item.Category).Distinct().ToList();
         }
 
         public void CalculateExpenditureByCategories() {
 
+            //For each distinct category
+
+            //Calculate cost of all items in each category
+
+            // Round to 2 decimal places
+
+            //Add to list or array
+
+            //Calculate the remaining sum
+
+            //Add as final category
         }
     }
 }
