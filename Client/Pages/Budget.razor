@@ -1,6 +1,9 @@
 ﻿@using System.Globalization;
 @page "/budget"
+@using Cheddar.Client.ViewModels
+@using Cheddar.Client.Models
 @inject NavigationManager NavManager
+@inject BudgetVM budget
 
 <PageTitle>Budget</PageTitle>
 
@@ -41,13 +44,13 @@
     </div>
     <div class="row">
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-            Data="@budgetLineItems" TItem="BudgetLine" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+            Data="@budget.budgetLineItems" TItem="BudgetLineItemModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
-                <RadzenDataGridColumn TItem="BudgetLine" Property="LineItemName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn TItem="BudgetLine" Property="Cost" Title="Cost" Width="140px"  />
-                <RadzenDataGridColumn TItem="BudgetLine" Property="Category" Title="Category" Width="140px" />
-                <RadzenDataGridColumn TItem="BudgetLine" Property="PaymentMethod" Title="Payment Method" Width="140px"/>
-                <RadzenDataGridColumn TItem="BudgetLine" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
+                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="BudgetLineName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Cost" Title="Cost" Width="140px"  />
+                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category" Title="Category" Width="140px" />
+                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod" Title="Payment Method" Width="140px"/>
+                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
             </Columns>
         </RadzenDataGrid>
     </div>
@@ -59,7 +62,6 @@
     public double Income = 3773.89;
 
     List<DataItem> expenditureByCategoriesWithRemaining;
-    List<BudgetLine> budgetLineItems;
     List<SalaryItem> salaryItems;
 
     
@@ -68,7 +70,9 @@
         return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-GB"));
     }
 
-    protected override async void OnInitialized() {
+    protected override async Task OnInitializedAsync() {
+
+        await budget.GetBudgetLineItems();
 
         expenditureByCategoriesWithRemaining = new List<DataItem> {
             new DataItem
@@ -107,7 +111,7 @@
             }
         );
 
-        budgetLineItems = new List<BudgetLine> {
+        /*budgetLineItems = new List<BudgetLine> {
             new BudgetLine
             {
                 LineItemName = "Apple Music",
@@ -116,7 +120,7 @@
                 PaymentMethod = "American Express",
                 ContractEndDate = "Rolling month",
             },
-        };
+        };*/
 
         salaryItems = new List<SalaryItem> {
             new SalaryItem

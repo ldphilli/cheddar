@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
-using System.Linq;
 using Cheddar.Client.Models;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
 
+        public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
         /// <summary>
         /// Add BudgetLineItem items to the container
         /// </summary>
@@ -20,9 +20,8 @@ namespace Cheddar.Client.ViewModels {
         {
             HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/GetBudgetLineItems";
-            List<BudgetLineItemModel>? budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
-            Console.WriteLine(budgetLineItems.First().BudgetLineName);
+            budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
+            //Console.WriteLine(budgetLineItems.First().BudgetLineName);
         }
     }
 }
-
