@@ -19,6 +19,3 @@ builder.Services.AddTransient<BudgetLineItemVM>();
 builder.Services.AddTransient<BudgetVM>();
 
 await builder.Build().RunAsync();
-
-CosmosClient cosmosClient = new CosmosClient(EndpointUrl, AuthorizationKey);
-//await Budget.AddItemsToContainerAsync(cosmosClient);

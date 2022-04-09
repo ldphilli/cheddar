@@ -29,7 +29,9 @@ namespace Cheddar.Client.ViewModels {
         public void CalculateExpenditureByCategories() {
 
             //For each distinct category
-
+            foreach (var item in budgetCategories) {
+                budgetLineItems.GroupBy(x => x.Category);
+            }
             //Calculate cost of all items in each category
 
             // Round to 2 decimal places
