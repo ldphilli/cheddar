@@ -8,5 +8,13 @@
             }
         }
     },
-    "functionTimeout": "00:10:00"
+    "extensions": {
+        "cosmosDB": {
+            "connectionMode": "Gateway",
+            "protocol": "Https",
+            "leaseOptions": {
+                "leasePrefix": "prefix1"
+            }
+        }
+    }
 }

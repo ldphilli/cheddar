@@ -19,18 +19,19 @@ namespace Cheddar.Function {
         [FunctionName("GetBudgetLineItems")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [CosmosDB(
+                databaseName: IDBOptionsModel.DBName,
+                containerName: IDBOptionsModel.BudgetLineItemsContainerName,
+                Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
-            //Database setup
-            CosmosClient cosmosClient = new CosmosClient(EndpointUrl, AuthorizationKey);
-            const string DatabaseId = "Cheddar";
-            const string ContainerId = "BudgetLineItems";
-            Container container = cosmosClient.GetContainer(DatabaseId, ContainerId);
+            
+            Container container = client.GetContainer(IDBOptionsModel.DBName, IDBOptionsModel.BudgetLineItemsContainerName);
 
             try {
                 List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
 
                 //Setup query to database, get all budget line items for current user
-                var queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
+                QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
                 .WithParameter("@userId", 1);
                 using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                     queryDefinition,
