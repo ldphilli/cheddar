@@ -4,6 +4,7 @@
 @using Cheddar.Client.Models
 @inject NavigationManager NavManager
 @inject BudgetVM budget
+@inject SalaryUpdateViewModel SalaryUpdateViewModel
 
 <PageTitle>Budget</PageTitle>
 
@@ -32,7 +33,7 @@
         <div class="col-sm-12 my-5 crd-primary">
         
             <RadzenChart>
-                <RadzenLineSeries Smooth="true" Data="@salaryItems" CategoryProperty="Date" Title="Salary" ValueProperty="Salary">
+                <RadzenLineSeries Smooth="true" Data="@SalaryUpdateViewModel.salaryUpdateItems" CategoryProperty="Date" Title="Salary" ValueProperty="Amount">
                     <RadzenMarkers MarkerType="MarkerType.Circle" />
                 </RadzenLineSeries>
                 <RadzenCategoryAxis Padding="20" FormatString="{0:MMM}" />
@@ -63,11 +64,6 @@
 
 
 @code {
-
-    public double Income = 3773.89;
-
-    List<SalaryItem> salaryItems;
-
     
     string FormatAsGBP(object value)
     {
@@ -77,94 +73,8 @@
     protected override async Task OnInitializedAsync() {
 
         await budget.GetBudgetLineItems();
+        await SalaryUpdateViewModel.GetSalaryUpdateItems();
 
-        salaryItems = new List<SalaryItem> {
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2012-07-09"),
-                Salary = 10000
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2012-09-03"),
-                Salary = 16000
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2014-01-01"),
-                Salary = 19000
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2015-01-01"),
-                Salary = 20898
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2015-08-01"),
-                Salary = 24573
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2016-01-01"),
-                Salary = 27509
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2016-08-01"),
-                Salary = 29689
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2017-01-01"),
-                Salary = 31689
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2017-08-01"),
-                Salary = 34400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2018-01-01"),
-                Salary = 35400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2018-08-01"),
-                Salary = 37400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2019-01-01"),
-                Salary = 42400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2019-08-01"),
-                Salary = 47400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2020-01-01"),
-                Salary = 49900
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2020-08-01"),
-                Salary = 54400
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2021-01-01"),
-                Salary = 56610
-            },
-            new SalaryItem
-            {
-                Date = DateTime.Parse("2022-01-01"),
-                Salary = 64897
-            }
-        };
     }
 
     public void AddNewBudgetItem() {
@@ -173,11 +83,5 @@
 
     public void AddNewSalaryItem() {
         NavManager.NavigateTo("/salaryupdate");
-    }
-
-     class SalaryItem
-    {
-        public DateTime Date { get; set; }
-        public double Salary { get; set; }
     }
 }
