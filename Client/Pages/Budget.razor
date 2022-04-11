@@ -20,9 +20,9 @@
                 <p class="font white-heading">Monthly budget spend</p>
             </RadzenCard>
         </div>
-        <div class="col-sm-12 col-lg-6 col-xl-3 my-5 crd-primary">
+        <div class="col-sm-12 col-lg-6 col-xl-4 my-5 crd-primary">
             <RadzenChart>
-                <RadzenPieSeries Data="@expenditureByCategoriesWithRemaining" Title="Revenue" CategoryProperty="Category" ValueProperty="Amount" />
+                <RadzenPieSeries Data="@budget.CostPerCategory" Title="Revenue" CategoryProperty="Key" ValueProperty="Value" />
             </RadzenChart>
         </div>
         <div class="col-sm-12 my-5 crd-primary">
@@ -61,7 +61,6 @@
 
     public double Income = 3773.89;
 
-    List<DataItem> expenditureByCategoriesWithRemaining;
     List<SalaryItem> salaryItems;
 
     
@@ -73,43 +72,6 @@
     protected override async Task OnInitializedAsync() {
 
         await budget.GetBudgetLineItems();
-
-        expenditureByCategoriesWithRemaining = new List<DataItem> {
-            new DataItem
-            {
-                Category = "Debt",
-                Amount = Math.Round((366 / Income) * 100, 2)
-            },
-            new DataItem
-            {
-                Category = "Entertainment",
-                Amount = Math.Round((43.68 / Income) * 100, 2)
-            },
-            new DataItem
-            {
-                Category = "Health",
-                Amount = Math.Round((11.3 / Income) * 100, 2)
-            },
-            new DataItem
-            {
-                Category = "Business",
-                Amount = Math.Round((11.4 / Income) * 100, 2)
-            },
-            new DataItem
-            {
-                Category = "Utility",
-                Amount = Math.Round((1046.40 / Income) * 100, 2)
-            },
-            
-        };
-
-        expenditureByCategoriesWithRemaining.Add(
-            new DataItem
-            {
-                Category = "Remaining",
-                Amount = expenditureByCategoriesWithRemaining.Sum(item => item.Amount)
-            }
-        );
 
         salaryItems = new List<SalaryItem> {
             new SalaryItem
@@ -202,11 +164,6 @@
 
     public void AddNewBudgetItem() {
         NavManager.NavigateTo("/newbudgetlineitem");
-    }
-
-    class DataItem {
-        public string Category { get; set; }
-        public double Amount { get; set; }
     }
 
      class SalaryItem

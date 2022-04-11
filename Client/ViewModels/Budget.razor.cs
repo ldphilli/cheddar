@@ -8,6 +8,9 @@ namespace Cheddar.Client.ViewModels {
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
         public List<string>? budgetCategories = new List<string>();
+
+        public Dictionary<string, double> CostPerCategory { get; set; }
+
         /// <summary>
         /// Add BudgetLineItem items to the container
         /// </summary>
@@ -23,24 +26,21 @@ namespace Cheddar.Client.ViewModels {
             HttpClient client = new HttpClient();
             var url = "http://localhost:7071/api/GetBudgetLineItems";
             budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
-            budgetCategories = budgetLineItems.Select(item => item.Category).Distinct().ToList();
+            CalculateExpenditureByCategories();
         }
 
-        public void CalculateExpenditureByCategories() {
+        public Dictionary<string, double> CalculateExpenditureByCategories() {
 
-            //For each distinct category
-            foreach (var item in budgetCategories) {
-                budgetLineItems.GroupBy(x => x.Category);
-            }
-            //Calculate cost of all items in each category
-
-            // Round to 2 decimal places
-
-            //Add to list or array
-
-            //Calculate the remaining sum
-
-            //Add as final category
+            var budget = 1000;
+            var totalCost = budgetLineItems.Sum(x => x.Cost);
+            CostPerCategory = new Dictionary<string, double>(budgetLineItems
+                .GroupBy(x => x.Category)
+                .Select(grouping => new KeyValuePair<string, double>(grouping.Key, Math.Round((grouping.Sum(x => x.Cost) / budget) * 100, 2))));
+                
+            //Add remaining as final category and calculate the remaining amount
+            CostPerCategory.Add("Remaining", Math.Round(((budget - totalCost) / budget) * 100, 2));
+            
+            return CostPerCategory;
         }
     }
 }
