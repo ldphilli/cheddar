@@ -10,8 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0-preview.2.22153.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.17.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Radzen.Blazor" Version="3.16.3" />
