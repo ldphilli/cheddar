@@ -29,14 +29,8 @@ namespace Cheddar.Function {
             var item = JsonConvert.DeserializeObject<ISalaryUpdateModel>(requestBody);
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            try {
+            await documentsOut.AddAsync(item);
 
-                await documentsOut.AddAsync(item);
-
-            }
-            catch(Exception ex) {//when (ex.Status == (int)HttpStatusCode.NotFound)
-                
-            }
             return new OkObjectResult("Success!");
         }
     }
