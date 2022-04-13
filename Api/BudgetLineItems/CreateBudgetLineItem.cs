@@ -1,4 +1,3 @@
-using Cheddar.Client.Models;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -11,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
     public static class CreateBudgetLineItem {
@@ -21,8 +21,8 @@ namespace Cheddar.Function {
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             [CosmosDB(
-                databaseName: IDBOptionsModel.DBName,
-                containerName: IDBOptionsModel.BudgetLineItemsContainerName,
+                databaseName: DbConfiguration.DBName,
+                containerName: DbConfiguration.BudgetLineItemsContainerName,
                 Connection = "CosmosDBConnection")]IAsyncCollector<BudgetLineItemModel> documentsOut,
             ILogger log) {
 

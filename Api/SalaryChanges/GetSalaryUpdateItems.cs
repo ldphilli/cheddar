@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
     public static class GetSalaryUpdateItems {
@@ -20,12 +21,12 @@ namespace Cheddar.Function {
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             [CosmosDB(
-                databaseName: IDBOptionsModel.DBName,
-                containerName: IDBOptionsModel.SalaryUpdateItemsContainerName,
+                databaseName: DbConfiguration.DBName,
+                containerName: DbConfiguration.SalaryUpdateItemsContainerName,
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
             
-            Container container = client.GetContainer(IDBOptionsModel.DBName, IDBOptionsModel.SalaryUpdateItemsContainerName);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.SalaryUpdateItemsContainerName);
 
             try {
                 List<ISalaryUpdateModel> allSalaryUpdateItemsForUser = new List<ISalaryUpdateModel>();

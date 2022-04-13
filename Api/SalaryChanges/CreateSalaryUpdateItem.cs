@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
     public static class CreateSalaryChangeItem {
@@ -20,8 +21,8 @@ namespace Cheddar.Function {
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             [CosmosDB(
-                databaseName: IDBOptionsModel.DBName,
-                containerName: IDBOptionsModel.SalaryUpdateItemsContainerName,
+                databaseName: DbConfiguration.DBName,
+                containerName: DbConfiguration.SalaryUpdateItemsContainerName,
                 Connection = "CosmosDBConnection")]IAsyncCollector<ISalaryUpdateModel> documentsOut,
             ILogger log) {
 
