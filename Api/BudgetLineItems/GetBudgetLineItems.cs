@@ -1,4 +1,5 @@
 using Cheddar.Client.Models;
+using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
