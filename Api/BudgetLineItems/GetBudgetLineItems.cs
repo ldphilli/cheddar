@@ -1,4 +1,4 @@
-using Cheddar.Client.Models;
+using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
@@ -10,22 +10,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
     public static class GetBudgetLineItems {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
-        private const string EndpointUrl = "https://personal-finance-db.documents.azure.com:443/";
-        private const string AuthorizationKey = "uKehVT4myAIG69BAYyLZOzHlxLh4Wx0JotaD0OQeg54lrcsWR8vQLpkAnfIKCv0j6Cd5hSCco26oyD9pQFbgwA==";
+        
         [FunctionName("GetBudgetLineItems")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             [CosmosDB(
-                databaseName: IDBOptionsModel.DBName,
-                containerName: IDBOptionsModel.BudgetLineItemsContainerName,
+                databaseName: DbConfiguration.DBName,
+                containerName: DbConfiguration.BudgetLineItemsContainerName,
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
             
-            Container container = client.GetContainer(IDBOptionsModel.DBName, IDBOptionsModel.BudgetLineItemsContainerName);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
 
             try {
                 List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();

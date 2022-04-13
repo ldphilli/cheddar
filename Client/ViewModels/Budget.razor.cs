@@ -1,4 +1,4 @@
-using Cheddar.Client.Models;
+using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections;
 using System.Net.Http.Json;

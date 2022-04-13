@@ -1,4 +1,4 @@
-using Cheddar.Client.Models;
+using Cheddar.Shared.Models;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetLineItemVM {

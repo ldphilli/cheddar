@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Cheddar.Client.Models {
+namespace Cheddar.Shared.Models {
     public class BudgetLineItemModel {
         [JsonProperty(PropertyName = "id")]
         public string? Id { get; set; }
