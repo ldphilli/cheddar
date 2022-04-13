@@ -18,7 +18,7 @@ namespace Cheddar.Client.ViewModels {
         
         public async Task AddItemsToContainerAsync(ISalaryUpdateModel salaryItem, NavigationManager nvm) {
             HttpClient client = new HttpClient();
-            var url = "http://localhost:7071/api/CreateSalaryChangeItem";
+            var url = "https://cheddarapi.azurewebsites.net/api/CreateSalaryChangeItem?";
             await client.PostAsJsonAsync(url, salaryItem);
             nvm.NavigateTo("/budget");
         }
@@ -26,7 +26,7 @@ namespace Cheddar.Client.ViewModels {
         public async Task GetSalaryUpdateItems() {
 
             HttpClient client = new HttpClient();
-            var url = "http://localhost:7071/api/GetSalaryUpdateItems";
+            var url = "https://cheddarapi.azurewebsites.net/api/GetSalaryUpdateItems?";
             salaryUpdateItems = await client.GetFromJsonAsync<List<ISalaryUpdateModel>>(url);
         }  
     }
