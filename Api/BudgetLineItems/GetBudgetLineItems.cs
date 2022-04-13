@@ -15,8 +15,7 @@ using Cheddar.Api.Configuration;
 namespace Cheddar.Function {
     public static class GetBudgetLineItems {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
-        private const string EndpointUrl = "https://personal-finance-db.documents.azure.com:443/";
-        private const string AuthorizationKey = "uKehVT4myAIG69BAYyLZOzHlxLh4Wx0JotaD0OQeg54lrcsWR8vQLpkAnfIKCv0j6Cd5hSCco26oyD9pQFbgwA==";
+        
         [FunctionName("GetBudgetLineItems")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,

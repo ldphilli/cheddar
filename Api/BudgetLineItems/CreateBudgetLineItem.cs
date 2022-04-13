@@ -15,12 +15,10 @@ using Cheddar.Api.Configuration;
 namespace Cheddar.Function {
     public static class CreateBudgetLineItem {
 
-        //private const string EndpointUrl = "https://personal-finance-db.documents.azure.com:443/";
-        //private const string AuthorizationKey = "uKehVT4myAIG69BAYyLZOzHlxLh4Wx0JotaD0OQeg54lrcsWR8vQLpkAnfIKCv0j6Cd5hSCco26oyD9pQFbgwA==";
-        [FunctionName("CreateBudgetLineItem")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            [CosmosDB(
+    [FunctionName("CreateBudgetLineItem")]
+    public static async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+        [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetLineItemsContainerName,
                 Connection = "CosmosDBConnection")]IAsyncCollector<BudgetLineItemModel> documentsOut,
