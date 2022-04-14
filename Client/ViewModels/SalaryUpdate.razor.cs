@@ -17,7 +17,6 @@ namespace Cheddar.Client.ViewModels {
         }
         
         public async Task AddItemsToContainerAsync(ISalaryUpdateModel salaryItem, NavigationManager nvm) {
-            HttpClient client = new HttpClient();
             var url = "https://cheddarapi.azurewebsites.net/api/CreateSalaryChangeItem?";
             await client.PostAsJsonAsync(url, salaryItem);
             nvm.NavigateTo("/budget");
