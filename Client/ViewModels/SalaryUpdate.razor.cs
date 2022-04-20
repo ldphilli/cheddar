@@ -6,28 +6,28 @@ using System.Net.Http.Json;
 namespace Cheddar.Client.ViewModels {
     public class SalaryUpdateViewModel {
 
+        private readonly HttpClient ApiClient;
+
         public ISalaryUpdateModel salaryUpdateModel { get; set; }
         public List<ISalaryUpdateModel>? salaryUpdateItems = new List<ISalaryUpdateModel>();
         public Dictionary<string, double> allSalaryItems { get; set; }
-        public SalaryUpdateViewModel()
+        public SalaryUpdateViewModel(HttpClient apiClient)
         {
             salaryUpdateModel = new ISalaryUpdateModel();
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
             salaryUpdateModel.UserId = 1;
+            ApiClient = apiClient;
         }
         
         public async Task AddItemsToContainerAsync(ISalaryUpdateModel salaryItem, NavigationManager nvm) {
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/CreateSalaryChangeItem?";
-            await client.PostAsJsonAsync(url, salaryItem);
+
+            await ApiClient.PostAsJsonAsync("api/CreateSalaryChangeItem?", salaryItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetSalaryUpdateItems() {
 
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/GetSalaryUpdateItems?";
-            salaryUpdateItems = await client.GetFromJsonAsync<List<ISalaryUpdateModel>>(url);
+            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<ISalaryUpdateModel>>("api/GetSalaryUpdateItems?");
         }  
     }
 }

@@ -6,6 +6,13 @@ using System.Net.Http.Json;
 namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
 
+        private readonly HttpClient ApiClient;
+
+        public BudgetVM(HttpClient apiClient)
+        {
+            ApiClient = apiClient;
+        }
+
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
         public List<string>? budgetCategories = new List<string>();
 
@@ -17,17 +24,14 @@ namespace Cheddar.Client.ViewModels {
         /// Add BudgetLineItem items to the container
         /// </summary>
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem, NavigationManager nvm) {
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/CreateBudgetLineItem?";
-            await client.PostAsJsonAsync(url, budgetLineItem);
+
+            await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", budgetLineItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetBudgetLineItems() {
 
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/GetBudgetLineItems?";
-            budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
+            budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>("api/GetBudgetLineItems?");
             CalculateExpenditureByCategories();
         }
 
