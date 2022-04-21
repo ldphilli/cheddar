@@ -12,11 +12,15 @@
         <div class="col-lg-6 col-xl-3">
             <RadzenCard class="m-3 crd-primary ">
                 <h3 class="font bold white-heading">£3000.00</h3>
-                <p class="font white-heading">Last months income</p>
+                <p class="font white-heading">This months income</p>
             </RadzenCard>
             <RadzenCard class="m-3 crd-primary ">
                 <h3 class="font bold white-heading">£@budget.TotalCost</h3>
-                <p class="font white-heading">Monthly budget spend</p>
+                <p class="font white-heading">This months budget spend</p>
+            </RadzenCard>
+            <RadzenCard class="m-3 crd-primary ">
+                <h3 class="font bold white-heading">£1000.00</h3>
+                <p class="font white-heading">Remaining this month</p>
             </RadzenCard>
         </div>
         <div class="col-sm-12 col-lg-6 col-xl-4 my-5 crd-primary">
@@ -29,7 +33,6 @@
             <RadzenButton class="col-xl-1 btn-primary" Click="AddNewSalaryItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
         </div>
         <div class="col-sm-12 my-5 crd-primary">
-        
             <RadzenChart>
                 <RadzenLineSeries Smooth="true" Data="@SalaryUpdateViewModel.salaryUpdateItems" CategoryProperty="Date" Title="Salary" ValueProperty="Amount">
                     <RadzenMarkers MarkerType="MarkerType.Circle" />
@@ -45,6 +48,7 @@
     <div class="row">
         <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
         <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-1 btn-primary" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"

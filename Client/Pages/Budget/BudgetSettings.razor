@@ -1,0 +1,45 @@
+@using System.Globalization;
+@page "/budget-settings"
+@inject NavigationManager NavManager
+@inject BudgetVM budget
+@inject SalaryUpdateViewModel SalaryUpdateViewModel
+
+<PageTitle>Budget Settings</PageTitle>
+
+<div class="fluid-container">
+    <h2 class="font bold white-heading">Budget Categories</h2>
+    <div class="row">
+        <RadzenCard>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+        <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    </div>
+    <div class="row">
+        <h2 class="font bold white-heading">Budget Payment Methods</h2>
+        <RadzenCard>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+        <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    </div>
+    <div class="row">
+        <h2 class="font bold white-heading">Monthly Income</h2>
+        <div class="col-md-6 col-lg-4 p-3">
+            <RadzenCard>
+                <RadzenNumeric TValue="double" Placeholder="14.99" />
+            </RadzenCard>
+            <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        </div>
+    </div>
+    <div class="row">
+        <h2 class="font bold white-heading">Remaining Expenditure Categories</h2>
+        <RadzenCard>
+            <h4 class="mb-4">Category Name</h4>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+        <RadzenCard>
+            <h4 class="mb-4">Remaining budget %</h4>
+            <RadzenTextBox Placeholder="Apple Music" />
+        </RadzenCard>
+        <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    </div>
+</div>
