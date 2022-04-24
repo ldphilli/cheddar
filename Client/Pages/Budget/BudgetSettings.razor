@@ -1,8 +1,7 @@
 @using System.Globalization;
 @page "/budget-settings"
 @inject NavigationManager NavManager
-@inject BudgetVM budget
-@inject SalaryUpdateViewModel SalaryUpdateViewModel
+@inject BudgetSettingsViewModel BudgetSettingsViewModel
 
 <PageTitle>Budget Settings</PageTitle>
 
@@ -10,16 +9,16 @@
     <h2 class="font bold white-heading">Budget Categories</h2>
     <div class="row">
         <RadzenCard>
-            <RadzenTextBox Placeholder="Apple Music" />
+            <RadzenTextBox Placeholder="Entertainment" @bind-Value="@BudgetSettingsViewModel.budgetCategoryModel.Name" />
         </RadzenCard>
-        <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.AddBudgetCategoryToContainerAsync(BudgetSettingsViewModel.budgetCategoryModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <h2 class="font bold white-heading">Budget Payment Methods</h2>
         <RadzenCard>
-            <RadzenTextBox Placeholder="Apple Music" />
+            <RadzenTextBox Placeholder="Lloyds" @bind-Value="@BudgetSettingsViewModel.paymentMethodModel.Name" />
         </RadzenCard>
-        <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.AddPaymentMethodToContainerAsync(BudgetSettingsViewModel.paymentMethodModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <h2 class="font bold white-heading">Monthly Income</h2>

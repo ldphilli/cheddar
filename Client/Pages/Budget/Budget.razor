@@ -48,7 +48,7 @@
     <div class="row">
         <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
         <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-        <RadzenButton class="col-xl-1 btn-primary" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-1 btn-primary" Click="EditBudgetSettings" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
@@ -85,5 +85,9 @@
 
     public void AddNewSalaryItem() {
         NavManager.NavigateTo("/salaryupdate");
+    }
+
+    public void EditBudgetSettings() {
+        NavManager.NavigateTo("/budget-settings");
     }
 }
