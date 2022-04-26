@@ -21,13 +21,13 @@ namespace Cheddar.Function
         [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetCategoriesContainerName,
-                Connection = "CosmosDBConnection")]IAsyncCollector<IBudgetCategoriesModel> documentsOut,
+                Connection = "CosmosDBConnection")]IAsyncCollector<BudgetCategoriesModel> documentsOut,
         ILogger log)
     {
 
       // Parse json back to budget line item model type
       var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-      var item = JsonConvert.DeserializeObject<IBudgetCategoriesModel>(requestBody);
+      var item = JsonConvert.DeserializeObject<BudgetCategoriesModel>(requestBody);
       log.LogInformation("C# HTTP trigger function processed a request.");
 
       //Container container = cosmosClient.GetContainer(DatabaseId, ContainerId);

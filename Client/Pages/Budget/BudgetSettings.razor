@@ -1,4 +1,3 @@
-@using System.Globalization;
 @page "/budget-settings"
 @inject NavigationManager NavManager
 @inject BudgetSettingsViewModel BudgetSettingsViewModel
@@ -24,9 +23,9 @@
         <h2 class="font bold white-heading">Monthly Income</h2>
         <div class="col-md-6 col-lg-4 p-3">
             <RadzenCard>
-                <RadzenNumeric TValue="double" Placeholder="14.99" />
+                <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyIncome"/>
             </RadzenCard>
-            <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+            <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.SetNewMonthlyIncomeAsync(BudgetSettingsViewModel.budgetSettingsModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
         </div>
     </div>
     <div class="row">

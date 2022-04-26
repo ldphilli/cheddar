@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorApp.Client;
+using Cheddar.Client.Services;
 using Cheddar.Client.ViewModels;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -12,5 +13,6 @@ builder.Services.AddTransient<SalaryUpdateViewModel>();
 builder.Services.AddTransient<BudgetLineItemVM>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<BudgetVM>();
+builder.Services.AddTransient<BudgetSettingsService>();
 
 await builder.Build().RunAsync();

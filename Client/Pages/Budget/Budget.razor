@@ -3,6 +3,8 @@
 @inject NavigationManager NavManager
 @inject BudgetVM budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
+@using Cheddar.Client.Services;
+@inject BudgetSettingsService BudgetSettingsService
 
 <PageTitle>Budget</PageTitle>
 
@@ -11,7 +13,7 @@
     <div class="row">
         <div class="col-lg-6 col-xl-3">
             <RadzenCard class="m-3 crd-primary ">
-                <h3 class="font bold white-heading">£3000.00</h3>
+                <h3 class="font bold white-heading">£@BudgetSettingsService.userBudgetSettings.MonthlyIncome</h3>
                 <p class="font white-heading">This months income</p>
             </RadzenCard>
             <RadzenCard class="m-3 crd-primary ">
@@ -76,7 +78,7 @@
 
         await budget.GetBudgetLineItems();
         await SalaryUpdateViewModel.GetSalaryUpdateItems();
-
+        await BudgetSettingsService.GetMonthlyIncome();
     }
 
     public void AddNewBudgetItem() {

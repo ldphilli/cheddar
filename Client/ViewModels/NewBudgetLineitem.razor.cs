@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 namespace Cheddar.Client.ViewModels {
     public class BudgetLineItemVM {
         public BudgetLineItemModel bliModel { get; set; }
-        public List<IBudgetCategoriesModel> budgetCategories = new List<IBudgetCategoriesModel>();
+        public List<BudgetCategoriesModel> budgetCategories = new List<BudgetCategoriesModel>();
         
         public List<IPaymentMethodsModel> paymentMethods = new List<IPaymentMethodsModel>();
         private readonly HttpClient ApiClient;
@@ -18,7 +18,7 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task GetBudgetCatgories() {
 
-            budgetCategories = await ApiClient.GetFromJsonAsync<List<IBudgetCategoriesModel>>("api/GetBudgetCategoriesForUser?");
+            budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>("api/GetBudgetCategoriesForUser?");
         }
 
         public async Task GetPaymentMethods() {

@@ -7,28 +7,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
-    public static class GetBudgetCategories {
+    public static class GetMonthlyIncome {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
         
-        [FunctionName("GetBudgetCategoriesForUser")]
+        [FunctionName("GetMonthlyIncome")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             [CosmosDB(
                 databaseName: DbConfiguration.DBName,
-                containerName: DbConfiguration.BudgetCategoriesContainerName,
+                containerName: DbConfiguration.BudgetSettingsContainerName,
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
             
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetCategoriesContainerName);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
 
             try {
-                List<BudgetCategoriesModel> allBudgetCategoriesForUser = new List<BudgetCategoriesModel>();
+                List<IBudgetSettingsModel> allBudgetSettingsForUser = new List<IBudgetSettingsModel>();
 
                 //Setup query to database, get all budget line items for current user
                 QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
@@ -46,8 +47,8 @@ namespace Cheddar.Function {
                         if (responseMessage.IsSuccessStatusCode) {
                             //Parse return to list of Budget Line Item Model
                             dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<BudgetCategoriesModel> budgetCategories = streamResponse.Documents.ToObject<List<BudgetCategoriesModel>>();
-                            allBudgetCategoriesForUser.AddRange(budgetCategories);
+                            List<IBudgetSettingsModel> budgetSettingsItems = streamResponse.Documents.ToObject<List<IBudgetSettingsModel>>();
+                            allBudgetSettingsForUser.AddRange(budgetSettingsItems);
                         }
                         //If no results are returned
                         else {
@@ -55,7 +56,7 @@ namespace Cheddar.Function {
                         }
                     }
                 }
-                return new OkObjectResult(allBudgetCategoriesForUser);
+                return new OkObjectResult(allBudgetSettingsForUser.First());
             }
             catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
                 return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");
