@@ -6,7 +6,7 @@ namespace Cheddar.Client.Services {
     public class BudgetSettingsService {
 
         private readonly HttpClient ApiClient;
-        public IBudgetSettingsModel userBudgetSettings;
+        public IBudgetSettingsModel? userBudgetSettings;
 
         public BudgetSettingsService(HttpClient apiClient)
         {
@@ -14,6 +14,12 @@ namespace Cheddar.Client.Services {
         }
         public async Task GetMonthlyIncome() {
             userBudgetSettings = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
+        }
+
+        public async Task UpsertBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {
+
+            await ApiClient.PostAsJsonAsync("api/UpdateBudgetSettings", budgetSettings);
+            nvm.NavigateTo("/budget");
         }
     }
 }

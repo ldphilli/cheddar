@@ -6,5 +6,6 @@ namespace Cheddar.Shared.Models {
         public string? Id { get; set; }
         public int UserId { get; set; }
         public double MonthlyIncome { get; set; }
+        public DateTime? NewMonthlyBudgetDate { get; set; }
     }
 }

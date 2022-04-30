@@ -1,6 +1,7 @@
 @page "/budget-settings"
 @inject NavigationManager NavManager
 @inject BudgetSettingsViewModel BudgetSettingsViewModel
+@inject BudgetSettingsService BudgetSettingsService
 
 <PageTitle>Budget Settings</PageTitle>
 
@@ -25,7 +26,10 @@
             <RadzenCard>
                 <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyIncome"/>
             </RadzenCard>
-            <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.SetNewMonthlyIncomeAsync(BudgetSettingsViewModel.budgetSettingsModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+            <RadzenCard>
+                <RadzenDatePicker DateFormat="d" @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.NewMonthlyBudgetDate" />
+            </RadzenCard>
+            <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsService.UpsertBudgetSettings(BudgetSettingsService.userBudgetSettings, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
         </div>
     </div>
     <div class="row">
@@ -41,3 +45,11 @@
         <RadzenButton class="col-xl-3" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
 </div>
+
+@code {
+
+    protected override async Task OnInitializedAsync() {
+
+        await BudgetSettingsService.GetMonthlyIncome();
+    }
+}
