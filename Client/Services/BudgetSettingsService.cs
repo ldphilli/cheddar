@@ -1,4 +1,5 @@
 using Cheddar.Shared.Models;
+using Cheddar.Client.ViewModels;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
@@ -6,18 +7,21 @@ namespace Cheddar.Client.Services {
     public class BudgetSettingsService {
 
         private readonly HttpClient ApiClient;
+        public BudgetSettingsViewModel budgetSettingsViewModel;
         public IBudgetSettingsModel? userBudgetSettings;
 
-        public BudgetSettingsService(HttpClient apiClient)
+        public BudgetSettingsService(HttpClient apiClient, BudgetSettingsViewModel bsViewModel)
         {
             ApiClient = apiClient;
+            budgetSettingsViewModel = bsViewModel;
         }
         public async Task GetMonthlyIncome() {
-            userBudgetSettings = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
+            budgetSettingsViewModel.budgetSettingsModel = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
+            Console.WriteLine(String.Concat("Get monthly income method ", budgetSettingsViewModel.budgetSettingsModel.Id));
         }
 
         public async Task UpsertBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {
-
+            Console.WriteLine(String.Concat("Upsert Budget Settings ", budgetSettings.MonthlyIncome.ToString()));
             await ApiClient.PostAsJsonAsync("api/UpdateBudgetSettings", budgetSettings);
             nvm.NavigateTo("/budget");
         }

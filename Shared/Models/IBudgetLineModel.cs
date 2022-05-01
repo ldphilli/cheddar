@@ -4,7 +4,7 @@ namespace Cheddar.Shared.Models {
     public class BudgetLineItemModel {
         [JsonProperty(PropertyName = "id")]
         public string? Id { get; set; }
-        [JsonProperty("partitionKey")]
+        [JsonProperty(PropertyName = "UserId")]
         public int UserId { get; set; }
         public string? BudgetLineName { get; set; }
         public double Cost { get; set; }

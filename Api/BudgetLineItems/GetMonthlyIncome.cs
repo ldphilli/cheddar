@@ -32,7 +32,7 @@ namespace Cheddar.Function {
                 List<IBudgetSettingsModel> allBudgetSettingsForUser = new List<IBudgetSettingsModel>();
 
                 //Setup query to database, get all budget line items for current user
-                QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
+                QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.userId = @userId")
                 .WithParameter("@userId", 2);
                 using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                     queryDefinition,
@@ -48,7 +48,9 @@ namespace Cheddar.Function {
                             //Parse return to list of Budget Line Item Model
                             dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
                             List<IBudgetSettingsModel> budgetSettingsItems = streamResponse.Documents.ToObject<List<IBudgetSettingsModel>>();
-                            allBudgetSettingsForUser.AddRange(budgetSettingsItems);
+                            if(budgetSettingsItems != null) {
+                                allBudgetSettingsForUser.AddRange(budgetSettingsItems);
+                            }
                         }
                         //If no results are returned
                         else {
@@ -56,7 +58,16 @@ namespace Cheddar.Function {
                         }
                     }
                 }
-                return new OkObjectResult(allBudgetSettingsForUser.First());
+                if(allBudgetSettingsForUser != null)
+                {
+                    log.LogInformation(allBudgetSettingsForUser.First().Id);
+                    Console.WriteLine(allBudgetSettingsForUser.First().Id);
+                    return new OkObjectResult(allBudgetSettingsForUser.First());
+                }
+                else{
+                    return new BadRequestObjectResult("Failed to find records.");
+                }
+                
             }
             catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
                 return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");

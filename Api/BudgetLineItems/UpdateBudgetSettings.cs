@@ -14,12 +14,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
-
 namespace Cheddar.Function
 {
   public static class UpdateBudgetSettings
   {
-
         private static readonly JsonSerializer Serializer = new JsonSerializer();
 
         [FunctionName("UpdateBudgetSettings")]
@@ -28,35 +26,15 @@ namespace Cheddar.Function
         [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetSettingsContainerName,
-                Connection = "CosmosDBConnection")] CosmosClient client,
+                Connection = "CosmosDBConnection")]IAsyncCollector<IBudgetSettingsModel> documentsOut,
         ILogger log) {
 
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
-
             try {
-                //IBudgetSettingsModel salesOrderV4 = //GetSalesOrderSample("SalesOrder4");
 
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var item = JsonConvert.DeserializeObject<IBudgetSettingsModel>(requestBody);
-                log.LogInformation(item.UserId.ToString());
-                using (Stream stream = ToStream<IBudgetSettingsModel>(item))
-                {
-                    using (ResponseMessage responseMessage = await container.UpsertItemStreamAsync(
-                        partitionKey: new PartitionKey("UserId"),
-                        streamPayload: stream))
-                    {
-                        // Item stream operations do not throw exceptions for better performance
-                        if (responseMessage.IsSuccessStatusCode)
-                        {
-                            IBudgetSettingsModel streamResponse = FromStream<IBudgetSettingsModel>(responseMessage.Content);
-                            Console.WriteLine($"\n1.7.2 - Item upserted via stream {streamResponse.Id}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Upsert item from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                        }
-                    }
-                }
+                
+                await documentsOut.AddAsync(item);
                 return new OkObjectResult("Success!");
             }
             catch(CosmosException cosmosException) {

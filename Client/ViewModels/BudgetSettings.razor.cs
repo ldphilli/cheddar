@@ -23,7 +23,7 @@ namespace Cheddar.Client.ViewModels {
             paymentMethodModel.Id = Guid.NewGuid().ToString();
 
             budgetSettingsModel = new IBudgetSettingsModel();
-            budgetSettingsModel.UserId = 2;
+            budgetSettingsModel.userId = 2;
             budgetSettingsModel.Id = Guid.NewGuid().ToString();
         }
 
