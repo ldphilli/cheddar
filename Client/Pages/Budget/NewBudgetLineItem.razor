@@ -24,7 +24,7 @@
         <RadzenCard>
             <h4 class="mb-4">Category</h4>
             <RadzenDropDown Class="w-100" 
-                            Data=@BudgetLineViewModel.budgetCategories TValue="string" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
+                            Data=@BudgetLineViewModel.budgetCategories TValue="BudgetCategoriesModel" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">

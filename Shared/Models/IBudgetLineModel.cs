@@ -8,7 +8,7 @@ namespace Cheddar.Shared.Models {
         public int UserId { get; set; }
         public string? BudgetLineName { get; set; }
         public double Cost { get; set; }
-        public string? Category { get; set; }
+        public BudgetCategoriesModel? Category { get; set; }
         public IPaymentMethodsModel? PaymentMethod { get; set; }
         public DateTime? ContractEndDate { get; set; }
     }

@@ -39,7 +39,7 @@ namespace Cheddar.Client.ViewModels {
             var budget = 1000;
             TotalCost = budgetLineItems.Sum(x => x.Cost);
             CostPerCategory = new Dictionary<string, double>(budgetLineItems
-                .GroupBy(x => x.Category)
+                .GroupBy(x => x.Category.Name)
                 .Select(grouping => new KeyValuePair<string, double>(grouping.Key, Math.Round((grouping.Sum(x => x.Cost) / budget) * 100, 2))));
                 
             //Add remaining as final category and calculate the remaining amount
