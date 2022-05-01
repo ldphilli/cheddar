@@ -32,7 +32,6 @@ namespace Cheddar.Function
 
       try
       {
-        //Add check to see if any exist first
         await documentsOut.AddAsync(item);
       }
       catch (Exception ex)

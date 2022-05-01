@@ -17,11 +17,9 @@ namespace Cheddar.Client.Services {
         }
         public async Task GetMonthlyIncome() {
             budgetSettingsViewModel.budgetSettingsModel = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
-            Console.WriteLine(String.Concat("Get monthly income method ", budgetSettingsViewModel.budgetSettingsModel.Id));
         }
 
-        public async Task UpsertBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {
-            Console.WriteLine(String.Concat("Upsert Budget Settings ", budgetSettings.MonthlyIncome.ToString()));
+        public async Task UpsertBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {  
             await ApiClient.PostAsJsonAsync("api/UpdateBudgetSettings", budgetSettings);
             nvm.NavigateTo("/budget");
         }

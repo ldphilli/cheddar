@@ -29,6 +29,7 @@ namespace Cheddar.Function
       var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
       var item = JsonConvert.DeserializeObject<BudgetLineItemModel>(requestBody);
       log.LogInformation("C# HTTP trigger function processed a request.");
+      log.LogInformation(item.PaymentMethod.Name);
 
       //Container container = cosmosClient.GetContainer(DatabaseId, ContainerId);
       try

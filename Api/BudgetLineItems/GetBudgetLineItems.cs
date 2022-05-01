@@ -32,7 +32,7 @@ namespace Cheddar.Function {
 
                 //Setup query to database, get all budget line items for current user
                 QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-                .WithParameter("@userId", 1);
+                .WithParameter("@userId", 2);
                 using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                     queryDefinition,
                     null,

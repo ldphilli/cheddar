@@ -60,8 +60,6 @@ namespace Cheddar.Function {
                 }
                 if(allBudgetSettingsForUser != null)
                 {
-                    log.LogInformation(allBudgetSettingsForUser.First().Id);
-                    Console.WriteLine(allBudgetSettingsForUser.First().Id);
                     return new OkObjectResult(allBudgetSettingsForUser.First());
                 }
                 else{
