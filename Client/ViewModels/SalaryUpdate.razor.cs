@@ -7,18 +7,18 @@ namespace Cheddar.Client.ViewModels {
 
         private readonly HttpClient ApiClient;
 
-        public ISalaryUpdateModel salaryUpdateModel { get; set; }
-        public List<ISalaryUpdateModel>? salaryUpdateItems = new List<ISalaryUpdateModel>();
+        public SalaryUpdateModel salaryUpdateModel { get; set; }
+        public List<SalaryUpdateModel>? salaryUpdateItems = new List<SalaryUpdateModel>();
         public Dictionary<string, double> allSalaryItems { get; set; }
         public SalaryUpdateViewModel(HttpClient apiClient)
         {
-            salaryUpdateModel = new ISalaryUpdateModel();
+            salaryUpdateModel = new SalaryUpdateModel();
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
             salaryUpdateModel.UserId = 1;
             ApiClient = apiClient;
         }
         
-        public async Task AddItemsToContainerAsync(ISalaryUpdateModel salaryItem, NavigationManager nvm) {
+        public async Task AddItemsToContainerAsync(SalaryUpdateModel salaryItem, NavigationManager nvm) {
 
             await ApiClient.PostAsJsonAsync("api/CreateSalaryChangeItem?", salaryItem);
             nvm.NavigateTo("/budget");
@@ -26,7 +26,7 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task GetSalaryUpdateItems() {
 
-            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<ISalaryUpdateModel>>("api/GetSalaryUpdateItems?");
+            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<SalaryUpdateModel>>("api/GetSalaryUpdateItems?");
         }  
     }
 }

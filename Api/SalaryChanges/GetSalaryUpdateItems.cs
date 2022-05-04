@@ -28,7 +28,7 @@ namespace Cheddar.Function {
             Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.SalaryUpdateItemsContainerName);
 
             try {
-                List<ISalaryUpdateModel> allSalaryUpdateItemsForUser = new List<ISalaryUpdateModel>();
+                List<SalaryUpdateModel> allSalaryUpdateItemsForUser = new List<SalaryUpdateModel>();
 
                 //Setup query to database, get all budget line items for current user
                 QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
@@ -46,7 +46,7 @@ namespace Cheddar.Function {
                         if (responseMessage.IsSuccessStatusCode) {
                             //Parse return to list of Budget Line Item Model
                             dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<ISalaryUpdateModel> salaryUpdateItems = streamResponse.Documents.ToObject<List<ISalaryUpdateModel>>();
+                            List<SalaryUpdateModel> salaryUpdateItems = streamResponse.Documents.ToObject<List<SalaryUpdateModel>>();
                             allSalaryUpdateItemsForUser.AddRange(salaryUpdateItems);
                         }
                         //If no results are returned

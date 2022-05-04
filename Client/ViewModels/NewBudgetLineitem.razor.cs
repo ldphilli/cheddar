@@ -6,7 +6,7 @@ namespace Cheddar.Client.ViewModels {
         public BudgetLineItemModel bliModel { get; set; }
         public List<BudgetCategoriesModel> budgetCategories = new List<BudgetCategoriesModel>();
         
-        public List<IPaymentMethodsModel> paymentMethods = new List<IPaymentMethodsModel>();
+        public List<PaymentMethodsModel> paymentMethods = new List<PaymentMethodsModel>();
         private readonly HttpClient ApiClient;
         public BudgetLineItemVM(HttpClient apiClient)
         {
@@ -23,7 +23,7 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task GetPaymentMethods() {
 
-            paymentMethods = await ApiClient.GetFromJsonAsync<List<IPaymentMethodsModel>>("api/GetPaymentMethodsForUser?");
+            paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>("api/GetPaymentMethodsForUser?");
         }
 
     }

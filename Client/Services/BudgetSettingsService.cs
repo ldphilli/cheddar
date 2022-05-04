@@ -17,14 +17,13 @@ namespace Cheddar.Client.Services {
             return await ApiClient.GetFromJsonAsync<BudgetSettingsModel>("api/GetMonthlyIncome?");
         }
 
-        public async Task UpsertBudgetSettings(BudgetSettingsModel budgetSettings) {  
-            await ApiClient.PostAsJsonAsync("api/UpdateBudgetSettings", budgetSettings);
+        public async Task CreateOrUpdateBudgetSettingsDoc(BudgetSettingsModel budgetSettings) {  
+            await ApiClient.PostAsJsonAsync("api/CreateOrUpdateBudgetSettingsDoc", budgetSettings);
         }
 
-        public async Task CreateRemainingExpenditureCategories(RemainingExpenditureCategories remainingExpenditureCategory, NavigationManager nvm) {
+        public async Task CreateRemainingExpenditureCategoriesDoc(RemainingExpenditureCategoriesModel remainingExpenditureCategory) {
 
             await ApiClient.PostAsJsonAsync("api/CreateRemainingExpenditureCategories", remainingExpenditureCategory);
-            nvm.NavigateTo("/budget");
         }
     }
 }
