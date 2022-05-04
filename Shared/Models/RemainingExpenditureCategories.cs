@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 
-namespace Cheddar.Client.Models {
-    public class IRemainingExpenditureCategories {
+namespace Cheddar.Shared.Models {
+    public class RemainingExpenditureCategories {
         [JsonProperty(PropertyName = "id")]
         public string? Id { get; set; }
         [JsonProperty("partitionKey")]

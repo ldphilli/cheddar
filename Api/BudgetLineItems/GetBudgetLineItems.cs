@@ -28,7 +28,32 @@ namespace Cheddar.Function {
             Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
 
             try {
-                List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
+                
+                List<BudgetLineItemModel> allBudgetLineItemsForUser = await GetBudgetLineItemData(container);
+                return new OkObjectResult(allBudgetLineItemsForUser);
+            }
+            catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
+                return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");
+            }
+        }
+
+        private static T FromStream<T>(Stream stream) {
+            using (stream) {
+                if (typeof(Stream).IsAssignableFrom(typeof(T))) {
+                    return (T)(object)stream;
+                }
+
+                using (StreamReader sr = new StreamReader(stream)) {
+                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr)) {
+                        return Serializer.Deserialize<T>(jsonTextReader);
+                    }
+                }
+            }
+        }
+
+        public static async Task<List<BudgetLineItemModel>> GetBudgetLineItemData(Container container) {
+            
+            List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
 
                 //Setup query to database, get all budget line items for current user
                 QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
@@ -55,25 +80,7 @@ namespace Cheddar.Function {
                         }
                     }
                 }
-                return new OkObjectResult(allBudgetLineItemsForUser);
-            }
-            catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
-                return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");
-            }
-        }
-
-        private static T FromStream<T>(Stream stream) {
-            using (stream) {
-                if (typeof(Stream).IsAssignableFrom(typeof(T))) {
-                    return (T)(object)stream;
-                }
-
-                using (StreamReader sr = new StreamReader(stream)) {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr)) {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
-            }
+            return allBudgetLineItemsForUser;
         }
     }
 }

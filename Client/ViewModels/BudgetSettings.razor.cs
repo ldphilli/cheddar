@@ -1,4 +1,5 @@
 using Cheddar.Shared.Models;
+using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
@@ -6,13 +7,20 @@ namespace Cheddar.Client.ViewModels {
     public class BudgetSettingsViewModel {
 
         private readonly HttpClient ApiClient;
+        private ApplicationState appState;
         public BudgetCategoriesModel budgetCategoryModel { get; set; }
         public IPaymentMethodsModel paymentMethodModel { get; set; }
-        public IBudgetSettingsModel budgetSettingsModel { get; set; }
+        public BudgetSettingsModel budgetSettingsModel => appState.budgetSettingsModel;
+        public BudgetSettingsService budgetSettingsService;
 
-        public BudgetSettingsViewModel(HttpClient apiClient)
+        private readonly NavigationManager nvm;
+
+        public BudgetSettingsViewModel(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
         {
             ApiClient = apiClient;
+            nvm = navManager;
+            appState = applicationState;
+            budgetSettingsService = bsService;
 
             budgetCategoryModel = new BudgetCategoriesModel();
             budgetCategoryModel.Id = Guid.NewGuid().ToString();
@@ -22,7 +30,7 @@ namespace Cheddar.Client.ViewModels {
             paymentMethodModel.UserId = 2;
             paymentMethodModel.Id = Guid.NewGuid().ToString();
 
-            budgetSettingsModel = new IBudgetSettingsModel();
+            appState.budgetSettingsModel = new BudgetSettingsModel();
             budgetSettingsModel.userId = 2;
             budgetSettingsModel.Id = Guid.NewGuid().ToString();
         }
@@ -39,14 +47,16 @@ namespace Cheddar.Client.ViewModels {
             nvm.NavigateTo("/budget");
         }
 
-        /*public async Task GetMonthlyIncomeForUser() {
+        public async Task GetBudgetSettingDataForUser() {
 
-            budgetSettingsModel = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
-        }*/
+            appState.budgetSettingsModel = await budgetSettingsService.GetMonthlyIncome();
+        }
 
-        public async Task SetMonthlyBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {
+        public async Task CreateOrUpdateMonthlyIncome() {
 
-            await ApiClient.PostAsJsonAsync("api/CreateMonthlyBudgetSettings", budgetSettings);
+            //await ApiClient.PostAsJsonAsync("api/CreateMonthlyBudgetSettings", budgetSettings);
+            await budgetSettingsService.UpsertBudgetSettings(budgetSettingsModel);
+            await GetBudgetSettingDataForUser();
             nvm.NavigateTo("/budget");
         }
 

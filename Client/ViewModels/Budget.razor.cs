@@ -1,4 +1,6 @@
 using Cheddar.Shared.Models;
+using Cheddar.Client.ViewModels;
+using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
@@ -6,10 +8,16 @@ namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
 
         private readonly HttpClient ApiClient;
+        private ApplicationState appState;
+        private readonly NavigationManager nvm;
+        public BudgetSettingsService budgetSettingsService;
 
-        public BudgetVM(HttpClient apiClient)
+        public BudgetVM(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
         {
             ApiClient = apiClient;
+            nvm = navManager;
+            appState = applicationState;
+            budgetSettingsService = bsService;
         }
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
@@ -29,8 +37,14 @@ namespace Cheddar.Client.ViewModels {
         }
 
         public async Task GetBudgetLineItems() {
-
+            
             budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>("api/GetBudgetLineItems?");
+            CalculateExpenditureByCategories();
+        }
+
+        public async Task GetBudgetSettingsForUser() {
+            Console.WriteLine("Entered into Budget GetBudgetSettingsForUser");
+            appState.budgetSettingsModel = await budgetSettingsService.GetMonthlyIncome();
             CalculateExpenditureByCategories();
         }
 

@@ -7,20 +7,23 @@ namespace Cheddar.Client.Services {
     public class BudgetSettingsService {
 
         private readonly HttpClient ApiClient;
-        public BudgetSettingsViewModel budgetSettingsViewModel;
-        public IBudgetSettingsModel? userBudgetSettings;
 
-        public BudgetSettingsService(HttpClient apiClient, BudgetSettingsViewModel bsViewModel)
+        public BudgetSettingsService(HttpClient apiClient)
         {
             ApiClient = apiClient;
-            budgetSettingsViewModel = bsViewModel;
         }
-        public async Task GetMonthlyIncome() {
-            budgetSettingsViewModel.budgetSettingsModel = await ApiClient.GetFromJsonAsync<IBudgetSettingsModel>("api/GetMonthlyIncome?");
+        public async Task<BudgetSettingsModel> GetMonthlyIncome() {
+            Console.WriteLine("Entered into budget settings service GetMonthlyIncome");
+            return await ApiClient.GetFromJsonAsync<BudgetSettingsModel>("api/GetMonthlyIncome?");
         }
 
-        public async Task UpsertBudgetSettings(IBudgetSettingsModel budgetSettings, NavigationManager nvm) {  
+        public async Task UpsertBudgetSettings(BudgetSettingsModel budgetSettings) {  
             await ApiClient.PostAsJsonAsync("api/UpdateBudgetSettings", budgetSettings);
+        }
+
+        public async Task CreateRemainingExpenditureCategories(RemainingExpenditureCategories remainingExpenditureCategory, NavigationManager nvm) {
+
+            await ApiClient.PostAsJsonAsync("api/CreateRemainingExpenditureCategories", remainingExpenditureCategory);
             nvm.NavigateTo("/budget");
         }
     }

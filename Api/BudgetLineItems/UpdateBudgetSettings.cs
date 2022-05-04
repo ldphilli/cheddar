@@ -26,13 +26,13 @@ namespace Cheddar.Function
         [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetSettingsContainerName,
-                Connection = "CosmosDBConnection")]IAsyncCollector<IBudgetSettingsModel> documentsOut,
+                Connection = "CosmosDBConnection")]IAsyncCollector<BudgetSettingsModel> documentsOut,
         ILogger log) {
 
             try {
 
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var item = JsonConvert.DeserializeObject<IBudgetSettingsModel>(requestBody);
+                var item = JsonConvert.DeserializeObject<BudgetSettingsModel>(requestBody);
                 
                 await documentsOut.AddAsync(item);
                 return new OkObjectResult("Success!");

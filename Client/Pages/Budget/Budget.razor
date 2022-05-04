@@ -4,6 +4,7 @@
 @inject BudgetVM budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject BudgetSettingsService BudgetSettingsService
+@inject ApplicationState ApplicationState
 
 <PageTitle>Budget</PageTitle>
 
@@ -12,7 +13,8 @@
     <div class="row">
         <div class="col-lg-6 col-xl-3">
             <RadzenCard class="m-3 crd-primary ">
-                <h3 class="font bold white-heading">£@BudgetSettingsService.budgetSettingsViewModel.budgetSettingsModel.MonthlyIncome</h3>
+                @* There's a null error on below line despite value coming back *@
+                <h3 class="font bold white-heading">£@ApplicationState.budgetSettingsModel.MonthlyIncome</h3>
                 <p class="font white-heading">This months income</p>
             </RadzenCard>
             <RadzenCard class="m-3 crd-primary ">
@@ -77,7 +79,7 @@
 
         await budget.GetBudgetLineItems();
         await SalaryUpdateViewModel.GetSalaryUpdateItems();
-        await BudgetSettingsService.GetMonthlyIncome();
+        await budget.GetBudgetSettingsForUser();
     }
 
     public void AddNewBudgetItem() {

@@ -12,27 +12,30 @@ using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function
 {
-  public static class SetMonthlyIncome
+  public static class CreateRemainingExpenditureCategories
   {
 
-    [FunctionName("CreateMonthlyBudgetSettings")]
+    [FunctionName("CreateRemainingExpenditureCategories")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
         [CosmosDB(
                 databaseName: DbConfiguration.DBName,
-                containerName: DbConfiguration.BudgetSettingsContainerName,
-                Connection = "CosmosDBConnection")]IAsyncCollector<BudgetSettingsModel> documentsOut,
+                containerName: DbConfiguration.RemainingExpenditureCategoriesContainerName,
+                Connection = "CosmosDBConnection")]IAsyncCollector<RemainingExpenditureCategories> documentsOut,
         ILogger log)
     {
 
       // Parse json back to budget line item model type
       var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-      var item = JsonConvert.DeserializeObject<BudgetSettingsModel>(requestBody);
+      var item = JsonConvert.DeserializeObject<RemainingExpenditureCategories>(requestBody);
       log.LogInformation("C# HTTP trigger function processed a request.");
 
+      //Container container = cosmosClient.GetContainer(DatabaseId, ContainerId);
       try
       {
+
         await documentsOut.AddAsync(item);
+
       }
       catch (Exception ex)
       {//when (ex.Status == (int)HttpStatusCode.NotFound)

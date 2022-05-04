@@ -27,9 +27,9 @@ namespace Cheddar.Function {
             ILogger log) {
             
             Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
-
+            log.LogInformation("C# HTTP trigger function processed a request on GetMonthlyIncome.");
             try {
-                List<IBudgetSettingsModel> allBudgetSettingsForUser = new List<IBudgetSettingsModel>();
+                List<BudgetSettingsModel> allBudgetSettingsForUser = new List<BudgetSettingsModel>();
 
                 //Setup query to database, get all budget line items for current user
                 QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.userId = @userId")
@@ -47,7 +47,7 @@ namespace Cheddar.Function {
                         if (responseMessage.IsSuccessStatusCode) {
                             //Parse return to list of Budget Line Item Model
                             dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<IBudgetSettingsModel> budgetSettingsItems = streamResponse.Documents.ToObject<List<IBudgetSettingsModel>>();
+                            List<BudgetSettingsModel> budgetSettingsItems = streamResponse.Documents.ToObject<List<BudgetSettingsModel>>();
                             if(budgetSettingsItems != null) {
                                 allBudgetSettingsForUser.AddRange(budgetSettingsItems);
                             }
