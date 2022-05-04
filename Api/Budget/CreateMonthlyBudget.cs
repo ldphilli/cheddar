@@ -40,12 +40,15 @@ namespace Cheddar.Function
 
         //Get list of users from budget settings where monthlybudgetdate = today
         Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
-        Container budgetLineItemsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName
+        Container budgetLineItemsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
+        Container remainingExpenditureCategoriesContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
         );
 
         try {
             List<BudgetSettingsModel> allUsersWhoNeedNewBudgetToday = new List<BudgetSettingsModel>();
             List<BudgetLineItemModel> budgetLineItemsForUser = new List<BudgetLineItemModel>();
+            List<RemainingExpenditureCategoriesModel> remainingExpenditureCategoriesForUser = new List<RemainingExpenditureCategoriesModel>();
+            List<RemainingExpenditureCategoriesWithAmountModel> expenditureCategoriesWithAmountForUser = new List<RemainingExpenditureCategoriesWithAmountModel>();
             double totalCostOfExpenses;
             //Setup query to database, get all budget line items for current user
             QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.MonthlyBudgetDate = DateTimePart('d', GetCurrentDateTime())");
@@ -77,6 +80,7 @@ namespace Cheddar.Function
             foreach(var budgetSetting in allUsersWhoNeedNewBudgetToday) {
                 // Call to get budget line items for user
                 budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer);
+                
                 //Get remaining income - sum of budgetline items returned
                 if(budgetLineItemsForUser.Any()) {
                     log.LogInformation("Budget line items found");
@@ -91,6 +95,15 @@ namespace Cheddar.Function
                     monthlyBudget.Outgoing = totalCostOfExpenses;
                     monthlyBudget.Year = DateTime.Now.Year;
                     monthlyBudget.Month = DateTime.Now.Month;
+                    remainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategories.GetRemainingExpenditureCategoryData(remainingExpenditureCategoriesContainer);
+                    foreach(var expenditureCategory in remainingExpenditureCategoriesForUser) {
+                        RemainingExpenditureCategoriesWithAmountModel remExpenditureCategory = new RemainingExpenditureCategoriesWithAmountModel();
+                        remExpenditureCategory.Id = Guid.NewGuid().ToString();
+                        remExpenditureCategory.UserId = 2;
+                        remExpenditureCategory.CategoryName = expenditureCategory.CategoryName;
+                        remExpenditureCategory.Amount = monthlyBudget.Remaining * (expenditureCategory.Percentage / 100);
+                    }
+                    monthlyBudget.expenditureCategories = remainingExpenditureCategoriesForUser;
                     //Create monthly budget for user
                     await documentsOut.AddAsync(monthlyBudget);
                     log.LogInformation("Monthly budget for user created");

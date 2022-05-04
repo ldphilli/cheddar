@@ -36,11 +36,11 @@
         <h2 class="font bold white-heading">Remaining Expenditure Categories</h2>
         <RadzenCard>
             <h4 class="mb-4">Category Name</h4>
-            <RadzenTextBox Placeholder="Apple Music" />
+            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.CategoryName" />
         </RadzenCard>
         <RadzenCard>
             <h4 class="mb-4">Remaining budget %</h4>
-            <RadzenTextBox Placeholder="Apple Music" />
+            <RadzenNumeric TValue="int" Placeholder="10" @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.Percentage" />
         </RadzenCard>
         <RadzenButton class="col-xl-3" Click="@BudgetSettingsViewModel.CreateRemainingExpenditureCategory" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>

@@ -1,13 +1,12 @@
 using Newtonsoft.Json;
 
 namespace Cheddar.Shared.Models {
-    public class RemainingExpenditureCategoriesModel {
+    public class RemainingExpenditureCategoriesWithAmountModel {
         [JsonProperty(PropertyName = "id")]
         public string? Id { get; set; }
         [JsonProperty(PropertyName = "UserId")]
         public int UserId { get; set; }
         public string? CategoryName { get; set; }
-        public int Percentage { get; set; }
-        //public double Amount { get; set; }
+        public double Amount { get; set; }
     }
 }
