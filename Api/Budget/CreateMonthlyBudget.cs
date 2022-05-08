@@ -42,7 +42,6 @@ namespace Cheddar.Function
         Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
         Container budgetLineItemsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
         Container remainingExpenditureCategoriesContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
-        );
 
         try {
             List<BudgetSettingsModel> allUsersWhoNeedNewBudgetToday = new List<BudgetSettingsModel>();
@@ -51,7 +50,7 @@ namespace Cheddar.Function
             List<RemainingExpenditureCategoriesWithAmountModel> expenditureCategoriesWithAmountForUser = new List<RemainingExpenditureCategoriesWithAmountModel>();
             double totalCostOfExpenses;
             //Setup query to database, get all budget line items for current user
-            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.MonthlyBudgetDate = DateTimePart('d', GetCurrentDateTime())");
+            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.MonthlyBudgetDay = DateTimePart('d', GetCurrentDateTime())");
             using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                 queryDefinition,
                 null,
@@ -102,8 +101,8 @@ namespace Cheddar.Function
                         remExpenditureCategory.UserId = 2;
                         remExpenditureCategory.CategoryName = expenditureCategory.CategoryName;
                         remExpenditureCategory.Amount = monthlyBudget.Remaining * (expenditureCategory.Percentage / 100);
+                        monthlyBudget.expenditureCategories.Add(remExpenditureCategory);
                     }
-                    monthlyBudget.expenditureCategories = remainingExpenditureCategoriesForUser;
                     //Create monthly budget for user
                     await documentsOut.AddAsync(monthlyBudget);
                     log.LogInformation("Monthly budget for user created");
@@ -118,6 +117,7 @@ namespace Cheddar.Function
             return new BadRequestObjectResult("Bad");  
         }
     }
+
     private static T FromStream<T>(Stream stream) {
             using (stream) {
                 if (typeof(Stream).IsAssignableFrom(typeof(T))) {
