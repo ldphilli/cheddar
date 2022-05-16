@@ -17,6 +17,7 @@ builder.Services.AddTransient<BudgetLineItemVM>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<BudgetVM>();
 builder.Services.AddTransient<BudgetSettingsService>();
+builder.Services.AddTransient<WelcomeViewModel>();
 //Add application state model as a singleton
 builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddMsalAuthentication(options => {
