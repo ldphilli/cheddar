@@ -1,10 +1,12 @@
-﻿@using System.Globalization;
+﻿@using Microsoft.AspNetCore.Authorization
+@using System.Globalization;
 @page "/budget"
 @inject NavigationManager NavManager
 @inject BudgetVM budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject BudgetSettingsService BudgetSettingsService
 @inject ApplicationState ApplicationState
+@attribute [Authorize]
 
 <PageTitle>Budget</PageTitle>
 

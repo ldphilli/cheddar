@@ -1,4 +1,5 @@
 using Cheddar.Shared.Models;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels {

@@ -5,13 +5,14 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogout">
+        @* Hello, @context.User.Identity.Name! *@
+        <RadzenButton class="nav-link btn-primary" Click="BeginLogout">
             Log out
-        </button>
+        </RadzenButton>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <RadzenButton class="nav-link btn-primary" Text="Let's go!" />
+        @* <a href="authentication/login">Log in</a> *@
     </NotAuthorized>
 </AuthorizeView>
 @code {
