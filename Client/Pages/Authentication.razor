@@ -1,9 +1,14 @@
 @page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Naviagte
 
 <RemoteAuthenticatorView Action="@Action" />
 
 @code {
     [Parameter]
-    public string Action { get; set; }
+    public string? Action { get; set; }
+
+    public async void OnLogInSucceeded() {
+        Naviagte.NavigateTo("budget");
+    }
 }

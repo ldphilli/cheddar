@@ -12,7 +12,7 @@
         </RadzenButton>
     </Authorized>
     <NotAuthorized>
-        <RadzenButton class="nav-link btn-primary" Text="Let's go!" Click="@WelcomeViewModel.Login"/>
+        <RadzenButton class="nav-link btn-primary" Text="Let's go!" Click="Login"/>
         @* <a href="authentication/login">Log in</a> *@
     </NotAuthorized>
 </AuthorizeView>
@@ -20,5 +20,9 @@
     private async Task BeginLogout(MouseEventArgs args) {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
+    }
+
+    private void Login() {
+        Navigation.NavigateTo("authentication/login");
     }
 }
