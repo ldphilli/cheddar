@@ -40,10 +40,8 @@
         OnAuthenticationStateChanged(_currentAuthenticationStateTask);
     }
 
-    private void OnAuthenticationStateChanged(Task<AuthenticationState> authenticationStateTask)
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> authenticationStateTask)
     {
-        _ = InvokeAsync(async () =>
-        {
             var authState = await authenticationStateTask;
 
             var user = authState.User;
@@ -52,12 +50,9 @@
 
             Console.WriteLine("OnAuthenticationStateChanged - {0}", authenticated);
 
-            if (authenticated)
-            {       
+            if (authenticated) {       
                 Navigate.NavigateTo("budget");
             }
-
             StateHasChanged();
-        });
     }
 }
