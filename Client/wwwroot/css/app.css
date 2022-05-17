@@ -21,8 +21,8 @@ h1:focus {
 }
 
 .btn-primary {
-  background-image: linear-gradient(to right, #570DF8 20%, #F000B8 100%);
-    
+    background-image: linear-gradient(to right, #570DF8 20%, #F000B8 100%);
+    width: 100%;
 }
 
 .crd-primary {

@@ -23,5 +23,7 @@ builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddMsalAuthentication(options => {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
     options.ProviderOptions.DefaultAccessTokenScopes.Add("https://CheddarApp.onmicrosoft.com/25b6b977-0a24-4ba7-9795-45437c5cff10/Api.ReadWrite");
+    options.AuthenticationPaths.LogOutSucceededPath = "/";
 });
+
 await builder.Build().RunAsync();

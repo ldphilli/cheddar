@@ -1,14 +1,22 @@
 @page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Naviagte
+@inject NavigationManager Navigate
 
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action"
+                         OnLogOutSucceeded="OnLogoutSucceeded" />
 
 @code {
     [Parameter]
     public string? Action { get; set; }
 
-    public async void OnLogInSucceeded() {
-        Naviagte.NavigateTo("budget");
+    /* can't get this working
+    public async void OnLoginSucceeded()
+    {
+        Navigate.NavigateTo("budget");
+    }*/
+
+    public void OnLogoutSucceeded()
+    {
+        Navigate.NavigateTo("/");
     }
 }
