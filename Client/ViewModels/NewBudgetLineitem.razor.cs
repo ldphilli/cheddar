@@ -9,12 +9,14 @@ namespace Cheddar.Client.ViewModels {
         
         public List<PaymentMethodsModel> paymentMethods = new List<PaymentMethodsModel>();
         private readonly HttpClient ApiClient;
-        public BudgetLineItemVM(HttpClient apiClient)
+
+        private readonly ApplicationState appState;
+        public BudgetLineItemVM(HttpClient apiClient, ApplicationState applicationState)
         {
             ApiClient = apiClient;
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
-            //bliModel.UserId = 2;
+            appState = applicationState;
         }
 
         public async Task GetBudgetCatgories() {
