@@ -2,19 +2,22 @@ using Cheddar.Shared.Models;
 using Cheddar.Client.ViewModels;
 using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
 
         private readonly HttpClient ApiClient;
+        private readonly IHttpClientFactory _factory;
         private ApplicationState appState;
         private readonly NavigationManager nvm;
         public BudgetSettingsService budgetSettingsService;
 
-        public BudgetVM(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
+        public BudgetVM(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
         {
             ApiClient = apiClient;
+            _factory = factory;
             nvm = navManager;
             appState = applicationState;
             budgetSettingsService = bsService;
@@ -32,14 +35,24 @@ namespace Cheddar.Client.ViewModels {
         /// </summary>
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem, NavigationManager nvm) {
 
+            //var httpClient = _factory.CreateClient("api/CreateBudgetLineItem");
             await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", budgetLineItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetBudgetLineItems() {
             
-            budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>("api/GetBudgetLineItems?");
-            CalculateExpenditureByCategories();
+            try {
+                //var httpClient = _factory.CreateClient("WebAPI");
+                Console.WriteLine("Entered into Budget GetBudgetLineItems");
+                string request = String.Concat("api/GetBudgetLineItems?claim=", appState.Token);
+                Console.WriteLine(request);
+                budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>(request);
+                CalculateExpenditureByCategories();
+            }
+            catch (AccessTokenNotAvailableException exception) {
+                exception.Redirect();
+            }
         }
 
         public async Task GetBudgetSettingsForUser() {

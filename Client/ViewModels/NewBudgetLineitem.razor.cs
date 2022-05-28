@@ -14,7 +14,7 @@ namespace Cheddar.Client.ViewModels {
             ApiClient = apiClient;
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
-            bliModel.UserId = 2;
+            //bliModel.UserId = 2;
         }
 
         public async Task GetBudgetCatgories() {

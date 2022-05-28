@@ -15,7 +15,7 @@
     <h2 class="font bold white-heading">Summary</h2>
     <div class="row">
         <div class="col-lg-6 col-xl-3">
-            <RadzenCard class="m-3 crd-primary ">
+            <RadzenCard class="m-3 crd-primary">
                 @* There's a null error on below line despite value coming back *@
                 <h3 class="font bold white-heading">£@ApplicationState.budgetSettingsModel.MonthlyIncome</h3>
                 <p class="font white-heading">This months income</p>
@@ -80,7 +80,7 @@
 
     protected override async Task OnInitializedAsync() {
 
-        await budget.GetBudgetLineItems();
+        budget.GetBudgetLineItems();
         await SalaryUpdateViewModel.GetSalaryUpdateItems();
         await budget.GetBudgetSettingsForUser();
     }
