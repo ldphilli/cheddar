@@ -19,9 +19,10 @@
                 <LoginDisplay></LoginDisplay>
             </div>
         </div>
-        <div class="col-xl-4 my-xl-auto offset-md-2">
-            <h1>Far right image placeholder</h1>
-            <img src="C:\Users\luphilli\Code\cheddar\Client\wwwroot\imgs\mock-up.jpg" />
+        <div class="col-xl-6 my-xl-auto">
+            @if(imageSource is not null) {
+                <img src="@imageSource" />
+            }
         </div>
     </div>
 </div>
