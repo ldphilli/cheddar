@@ -14,7 +14,6 @@ namespace Cheddar.Client.ViewModels {
         {
             salaryUpdateModel = new SalaryUpdateModel();
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
-            salaryUpdateModel.UserId = 1;
             ApiClient = apiClient;
         }
         

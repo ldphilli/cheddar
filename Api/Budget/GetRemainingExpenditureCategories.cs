@@ -1,3 +1,4 @@
+using Cheddar.Api.Shared;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -64,8 +65,7 @@ namespace Cheddar.Function {
                     queryDefinition,
                     null,
                     new QueryRequestOptions()
-                ));
-            }
+                ))
 
                 //While the stream has more results (0 or more)
                 while (streamResultSet.HasMoreResults) {
@@ -83,6 +83,8 @@ namespace Cheddar.Function {
                         }
                     }
                 }
+            }
+                
             return allRemainingExpenditureCategoriesForUser;
         }
     }

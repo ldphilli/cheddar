@@ -25,19 +25,16 @@ namespace Cheddar.Client.ViewModels {
 
             budgetCategoryModel = new BudgetCategoriesModel();
             budgetCategoryModel.Id = Guid.NewGuid().ToString();
-            budgetCategoryModel.UserId = 2;
 
             paymentMethodModel = new PaymentMethodsModel();
-            paymentMethodModel.UserId = 2;
             paymentMethodModel.Id = Guid.NewGuid().ToString();
 
             appState.budgetSettingsModel = new BudgetSettingsModel();
-            budgetSettingsModel.userId = 2;
             budgetSettingsModel.Id = Guid.NewGuid().ToString();
 
             remainingExpenditureCategoriesModel = new RemainingExpenditureCategoriesModel();
             remainingExpenditureCategoriesModel.Id = Guid.NewGuid().ToString();
-            remainingExpenditureCategoriesModel.UserId = 2;
+            //remainingExpenditureCategoriesModel.UserId = 2;
         }
 
         public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory, NavigationManager nvm) {

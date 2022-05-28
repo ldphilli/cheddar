@@ -1,3 +1,4 @@
+using Cheddar.Api.Shared;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;

@@ -1,3 +1,4 @@
+using Cheddar.Api.Shared;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -40,25 +41,26 @@ namespace Cheddar.Function {
                         queryDefinition,
                         null,
                         new QueryRequestOptions()
-                    ));
-                }
+                    ))
 
-                //While the stream has more results (0 or more)
-                while (streamResultSet.HasMoreResults) {
-                    using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync()) {
-                        // Item stream operations do not throw exceptions for better performance
-                        if (responseMessage.IsSuccessStatusCode) {
-                            //Parse return to list of Budget Line Item Model
-                            dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<BudgetCategoriesModel> budgetCategories = streamResponse.Documents.ToObject<List<BudgetCategoriesModel>>();
-                            allBudgetCategoriesForUser.AddRange(budgetCategories);
-                        }
-                        //If no results are returned
-                        else {
-                            Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
+                    //While the stream has more results (0 or more)
+                    while (streamResultSet.HasMoreResults) {
+                        using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync()) {
+                            // Item stream operations do not throw exceptions for better performance
+                            if (responseMessage.IsSuccessStatusCode) {
+                                //Parse return to list of Budget Line Item Model
+                                dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
+                                List<BudgetCategoriesModel> budgetCategories = streamResponse.Documents.ToObject<List<BudgetCategoriesModel>>();
+                                allBudgetCategoriesForUser.AddRange(budgetCategories);
+                            }
+                            //If no results are returned
+                            else {
+                                Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
+                            }
                         }
                     }
                 }
+
                 return new OkObjectResult(allBudgetCategoriesForUser);
             }
             catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
