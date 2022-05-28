@@ -5,7 +5,7 @@ namespace Cheddar.Shared.Models {
         [JsonProperty(PropertyName = "id")]
         public string? Id { get; set; }
         [JsonProperty(PropertyName = "UserId")]
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
         public double Income { get; set; }
         public double Outgoing { get; set; }
         public double Remaining { get; set; }
