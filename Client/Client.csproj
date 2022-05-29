@@ -13,13 +13,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.5" />
+    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Radzen.Blazor" Version="3.16.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
