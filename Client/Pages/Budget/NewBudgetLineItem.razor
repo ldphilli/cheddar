@@ -3,6 +3,7 @@
 @using Cheddar.Client.ViewModels
 @inject BudgetLineItemVM BudgetLineViewModel
 @inject BudgetVM budget
+@inject BudgetSettingsViewModel BudgetSettingsViewModel
 
 <PageTitle>New Budget Line Item</PageTitle>
 
@@ -23,14 +24,14 @@
         <RadzenCard>
             <h4 class="mb-4">Category</h4>
             <RadzenDropDown Class="w-100" 
-                            Data=@itemCategories @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
+                            Data=@BudgetLineViewModel.budgetCategories TValue="BudgetCategoriesModel" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">
         <RadzenCard>
             <h4 class="mb-4">Payment Methods</h4>
             <RadzenDropDown AllowClear="true" Class="w-100" 
-                            Data=@paymentMethods @bind-Value="@BudgetLineViewModel.bliModel.PaymentMethod"/>
+                            Data=@BudgetLineViewModel.paymentMethods TValue="PaymentMethodsModel" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.PaymentMethod"/>
         </RadzenCard>
     </div>
     <div class="col-lg-6 col-xl-4 p-3">
@@ -44,6 +45,11 @@
 
 
 @code {
-    List<string> paymentMethods = new List<string>() { "American Express", "Paypal", "Lloyds", "Starling" };
-    List<string> itemCategories = new List<string>() { "Business", "Debt", "Entertainment", "Health", "Remaining", "Utility" };
+
+    protected override async Task OnInitializedAsync() {
+
+        await BudgetLineViewModel.GetBudgetCatgories();
+        await BudgetLineViewModel.GetPaymentMethods();
+
+    }
 }

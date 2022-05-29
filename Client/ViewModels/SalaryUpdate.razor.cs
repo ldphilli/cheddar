@@ -1,33 +1,35 @@
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components;
-using System.Collections;
 using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels {
     public class SalaryUpdateViewModel {
 
-        public ISalaryUpdateModel salaryUpdateModel { get; set; }
-        public List<ISalaryUpdateModel>? salaryUpdateItems = new List<ISalaryUpdateModel>();
+        private readonly HttpClient ApiClient;
+        private ApplicationState appState;
+
+        public SalaryUpdateModel salaryUpdateModel { get; set; }
+        public List<SalaryUpdateModel>? salaryUpdateItems = new List<SalaryUpdateModel>();
         public Dictionary<string, double> allSalaryItems { get; set; }
-        public SalaryUpdateViewModel()
+        public SalaryUpdateViewModel(HttpClient apiClient, ApplicationState applicationState)
         {
-            salaryUpdateModel = new ISalaryUpdateModel();
+            salaryUpdateModel = new SalaryUpdateModel();
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
-            salaryUpdateModel.UserId = 1;
+            ApiClient = apiClient;
+            appState = applicationState;
         }
         
-        public async Task AddItemsToContainerAsync(ISalaryUpdateModel salaryItem, NavigationManager nvm) {
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/CreateSalaryChangeItem?";
-            await client.PostAsJsonAsync(url, salaryItem);
+        public async Task AddItemsToContainerAsync(SalaryUpdateModel salaryItem, NavigationManager nvm) {
+
+            string request = String.Concat("api/CreateSalaryChangeItem?claim=", appState.Token);
+            await ApiClient.PostAsJsonAsync(request, salaryItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetSalaryUpdateItems() {
 
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/GetSalaryUpdateItems?";
-            salaryUpdateItems = await client.GetFromJsonAsync<List<ISalaryUpdateModel>>(url);
+            string request = String.Concat("api/GetSalaryUpdateItems?claim=", appState.Token);
+            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<SalaryUpdateModel>>(request);
         }  
     }
 }

@@ -1,0 +1,12 @@
+@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject AuthenticationService authService
+
+<RemoteAuthenticatorView Action="@Action"
+                        OnLogInSucceeded="authService.OnLoginSucceeded"
+                         OnLogOutSucceeded="authService.OnLogoutSucceeded" />
+
+@code {
+    [Parameter]
+    public string? Action { get; set; }
+}
