@@ -14,34 +14,34 @@ using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function {
-    public static class GetSalaryUpdateItems {
-        
+    public static class GetBudgetCategories {
+
         private static readonly JsonSerializer Serializer = new JsonSerializer();
         private static jwtManagementToken manageToken = new jwtManagementToken();
-
-        [FunctionName("GetSalaryUpdateItems")]
+        
+        [FunctionName("GetBudgetCategoriesForUser")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             [CosmosDB(
                 databaseName: DbConfiguration.DBName,
-                containerName: DbConfiguration.SalaryUpdateItemsContainerName,
+                containerName: DbConfiguration.BudgetCategoriesContainerName,
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
 
-                string token = req.Query["claim"];
-                if(token != null) {
-                    log.LogInformation(token);
-                } else {
-                    return new BadRequestObjectResult("No token found");
-                }
+            string token = req.Query["claim"];
+            if(token != null) {
+                log.LogInformation(token);
+            } else {
+                return new BadRequestObjectResult("No token found");
+            }
             
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.SalaryUpdateItemsContainerName);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetCategoriesContainerName);
 
             try {
-                List<SalaryUpdateModel> allSalaryUpdateItemsForUser = new List<SalaryUpdateModel>();
+                List<BudgetCategoriesModel> allBudgetCategoriesForUser = new List<BudgetCategoriesModel>();
                 string userId = manageToken.GetUserIdFromToken(token);
                 if(userId != null || userId != string.Empty) {
-                    //Setup query to database, get all budget line items for current user
+                //Setup query to database, get all budget line items for current user
                     QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
                     .WithParameter("@userId", userId);
                     using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
@@ -57,8 +57,8 @@ namespace Cheddar.Function {
                             if (responseMessage.IsSuccessStatusCode) {
                                 //Parse return to list of Budget Line Item Model
                                 dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                                List<SalaryUpdateModel> salaryUpdateItems = streamResponse.Documents.ToObject<List<SalaryUpdateModel>>();
-                                allSalaryUpdateItemsForUser.AddRange(salaryUpdateItems);
+                                List<BudgetCategoriesModel> budgetCategories = streamResponse.Documents.ToObject<List<BudgetCategoriesModel>>();
+                                allBudgetCategoriesForUser.AddRange(budgetCategories);
                             }
                             //If no results are returned
                             else {
@@ -68,7 +68,7 @@ namespace Cheddar.Function {
                     }
                 }
 
-                return new OkObjectResult(allSalaryUpdateItemsForUser);
+                return new OkObjectResult(allBudgetCategoriesForUser);
             }
             catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
                 return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");

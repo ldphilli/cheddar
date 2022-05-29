@@ -1,10 +1,28 @@
 using Cheddar.Shared.Models;
+using Cheddar.Client.ViewModels;
+using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
-using System.Collections;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
+
+        private readonly HttpClient ApiClient;
+        private readonly IHttpClientFactory _factory;
+        private readonly ApplicationState appState;
+        //private static readonly Lazy<ApplicationState> appState = new Lazy<ApplicationState>(() => new ApplicationState());
+        private readonly NavigationManager nvm;
+        public BudgetSettingsService budgetSettingsService;
+
+        public BudgetVM(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
+        {
+            ApiClient = apiClient;
+            _factory = factory;
+            nvm = navManager;
+            appState = applicationState;
+            budgetSettingsService = bsService;
+        }
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
         public List<string>? budgetCategories = new List<string>();
@@ -17,17 +35,31 @@ namespace Cheddar.Client.ViewModels {
         /// Add BudgetLineItem items to the container
         /// </summary>
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem, NavigationManager nvm) {
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/CreateBudgetLineItem?";
-            await client.PostAsJsonAsync(url, budgetLineItem);
+
+            //var httpClient = _factory.CreateClient("api/CreateBudgetLineItem");
+            string request = String.Concat("api/CreateBudgetLineItem?claim=", appState.Token);
+            await ApiClient.PostAsJsonAsync(request, budgetLineItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetBudgetLineItems() {
+            
+            try {
+                //var httpClient = _factory.CreateClient("WebAPI");
+                //Console.WriteLine("Entered into Budget GetBudgetLineItems");
+                string request = String.Concat("api/GetBudgetLineItems?claim=", appState.Token);
+                //Console.WriteLine(request);
+                budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>(request);
+                CalculateExpenditureByCategories();
+            }
+            catch (AccessTokenNotAvailableException exception) {
+                exception.Redirect();
+            }
+        }
 
-            HttpClient client = new HttpClient();
-            var url = "https://cheddarapi.azurewebsites.net/api/GetBudgetLineItems?";
-            budgetLineItems = await client.GetFromJsonAsync<List<BudgetLineItemModel>>(url);
+        public async Task GetBudgetSettingsForUser() {
+            Console.WriteLine("Entered into Budget GetBudgetSettingsForUser");
+            appState.budgetSettingsModel = await budgetSettingsService.GetMonthlyIncome();
             CalculateExpenditureByCategories();
         }
 
@@ -36,7 +68,7 @@ namespace Cheddar.Client.ViewModels {
             var budget = 1000;
             TotalCost = budgetLineItems.Sum(x => x.Cost);
             CostPerCategory = new Dictionary<string, double>(budgetLineItems
-                .GroupBy(x => x.Category)
+                .GroupBy(x => x.Category.Name)
                 .Select(grouping => new KeyValuePair<string, double>(grouping.Key, Math.Round((grouping.Sum(x => x.Cost) / budget) * 100, 2))));
                 
             //Add remaining as final category and calculate the remaining amount

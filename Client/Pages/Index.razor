@@ -1,20 +1,34 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigate
+@inject ApplicationState appState
 
 <PageTitle>Index</PageTitle>
-
-<h1>Login to your account</h1>
-
-<div class="row col-xl-4 px-3">
-    <div class="col-xl-12 col-md-6 col-lg-4 p-3">
-        <RadzenCard>
-            <RadzenTextBox Placeholder="User Name" />
-        </RadzenCard>
+<div class="fluid-container h-100">
+    <div class="row">
+        <div class="col-xl-1">
+            Logo placeholder
+        </div>
     </div>
-    <div class="col-xl-12 col-md-6 col-lg-4 p-3">
-        <RadzenCard>
-            <RadzenTextBox Placeholder="Password" />
-        </RadzenCard>
+    <div class="row h-100 justify-content-center">
+        <div class="col-xl-4 offset-md-1 mx-xl-auto align-self-center text-center">
+            <h1 class="font white-heading bold">Welcome to Cheddar</h1>
+            <h2 class="font white-heading">Your aid to Personal Finance</h2>
+            <div class="col-xl-4 mx-auto">
+                <LoginDisplay></LoginDisplay>
+            </div>
+        </div>
+        <div class="col-xl-6 my-xl-auto text-center">
+            @* @if(imageSource is not null) {
+                <img src="@imageSource" />
+            } *@
+            Rightside image placeholder
+        </div>
     </div>
-    <RadzenButton class="col-xl-12 col-xl-3" Text="Login to your account" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-    <p>Not a member yet?</p><a>Register now</a>
 </div>
+
+ @code {
+
+    
+}
