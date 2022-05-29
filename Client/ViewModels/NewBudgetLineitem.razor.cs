@@ -21,12 +21,14 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task GetBudgetCatgories() {
 
-            budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>("api/GetBudgetCategoriesForUser?");
+            string request = String.Concat("api/GetBudgetCategoriesForUser?claim=", appState.Token);
+            budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>(request);
         }
 
         public async Task GetPaymentMethods() {
 
-            paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>("api/GetPaymentMethodsForUser?");
+            string request = String.Concat("api/GetPaymentMethodsForUser?claim=", appState.Token);
+            paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>(request);
         }
 
     }

@@ -19,7 +19,7 @@ namespace Cheddar.Client.Services {
     }
 
     // can't get navigate working here
-    public async void OnLoginSucceeded() {
+    public async Task OnLoginSucceeded() {
         var accessTokenResult = await TokenProvider.RequestAccessToken();
 
             if (accessTokenResult.TryGetToken(out var token))

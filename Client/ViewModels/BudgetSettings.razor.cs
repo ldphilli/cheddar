@@ -39,13 +39,15 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory, NavigationManager nvm) {
 
+            string request = String.Concat("api/CreateBudgetCategory?claim=", appState.Token);
             await ApiClient.PostAsJsonAsync("api/CreateBudgetCategory", budgetCategory);
             nvm.NavigateTo("/budget");
         }
 
         public async Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod, NavigationManager nvm) {
-
-            await ApiClient.PostAsJsonAsync("api/CreatePaymentMethod", paymentMethod);
+            
+            string request = String.Concat("api/CreatePaymentMethod?claim=", appState.Token);
+            await ApiClient.PostAsJsonAsync(request, paymentMethod);
             nvm.NavigateTo("/budget");
         }
 

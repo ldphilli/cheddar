@@ -10,7 +10,8 @@ namespace Cheddar.Client.ViewModels {
 
         private readonly HttpClient ApiClient;
         private readonly IHttpClientFactory _factory;
-        private ApplicationState appState;
+        private readonly ApplicationState appState;
+        //private static readonly Lazy<ApplicationState> appState = new Lazy<ApplicationState>(() => new ApplicationState());
         private readonly NavigationManager nvm;
         public BudgetSettingsService budgetSettingsService;
 
@@ -36,7 +37,8 @@ namespace Cheddar.Client.ViewModels {
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem, NavigationManager nvm) {
 
             //var httpClient = _factory.CreateClient("api/CreateBudgetLineItem");
-            await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", budgetLineItem);
+            string request = String.Concat("api/CreateBudgetLineItem?claim=", appState.Token);
+            await ApiClient.PostAsJsonAsync(request, budgetLineItem);
             nvm.NavigateTo("/budget");
         }
 
@@ -44,9 +46,9 @@ namespace Cheddar.Client.ViewModels {
             
             try {
                 //var httpClient = _factory.CreateClient("WebAPI");
-                Console.WriteLine("Entered into Budget GetBudgetLineItems");
+                //Console.WriteLine("Entered into Budget GetBudgetLineItems");
                 string request = String.Concat("api/GetBudgetLineItems?claim=", appState.Token);
-                Console.WriteLine(request);
+                //Console.WriteLine(request);
                 budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>(request);
                 CalculateExpenditureByCategories();
             }

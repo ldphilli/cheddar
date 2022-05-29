@@ -6,69 +6,105 @@
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject BudgetSettingsService BudgetSettingsService
 @inject ApplicationState ApplicationState
+@inject AuthenticationService AuthService
 @attribute [Authorize]
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <PageTitle>Budget</PageTitle>
 
 <div class="fluid-container">
-    <LoginDisplay></LoginDisplay>
-    <h2 class="font bold white-heading">Summary</h2>
-    <div class="row">
-        <div class="col-lg-6 col-xl-3">
-            <RadzenCard class="m-3 crd-primary">
-                @* There's a null error on below line despite value coming back *@
-                <h3 class="font bold white-heading">£@ApplicationState.budgetSettingsModel.MonthlyIncome</h3>
-                <p class="font white-heading">This months income</p>
-            </RadzenCard>
-            <RadzenCard class="m-3 crd-primary ">
-                <h3 class="font bold white-heading">£@budget.TotalCost</h3>
-                <p class="font white-heading">This months budget spend</p>
-            </RadzenCard>
-            <RadzenCard class="m-3 crd-primary ">
-                <h3 class="font bold white-heading">£1000.00</h3>
-                <p class="font white-heading">Remaining this month</p>
-            </RadzenCard>
+    @* <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <span class="fs-5 d-none d-sm-inline">Cheddar</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Budget</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div> *@
+        <LoginDisplay></LoginDisplay>
+        <div class="content area">
+            <row>
+                Good morning  / afternoon Name
+            </row>
+            <h2 class="font bold white-heading">Summary</h2>
+            <div class="row">
+                <div class="col-lg-6 col-xl-4">
+                    <RadzenCard class="m-3 crd-primary">
+                        @* There's a null error on below line despite value coming back *@
+                        <h3 class="font bold white-heading">£@ApplicationState.budgetSettingsModel.MonthlyIncome</h3>
+                        <p class="font white-heading">This months income</p>
+                    </RadzenCard>
+                </div>
+                <div class="col-lg-6 col-xl-4">
+                    <RadzenCard class="m-3 crd-primary ">
+                        <h3 class="font bold white-heading">£@budget.TotalCost</h3>
+                        <p class="font white-heading">This months budget spend</p>
+                    </RadzenCard>
+                </div>
+                <div class="col-lg-6 col-xl-4">
+                    <RadzenCard class="m-3 crd-primary ">
+                        <h3 class="font bold white-heading">£1000.00</h3>
+                        <p class="font white-heading">Remaining this month</p>
+                    </RadzenCard>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 col-xl-4 my-5 crd-primary">
+                    <RadzenChart>
+                        <RadzenPieSeries Data="@budget.CostPerCategory" Title="Revenue" CategoryProperty="Key" ValueProperty="Value" />
+                    </RadzenChart>
+                </div>
+            </div>
+                <div class="row">
+                    <h2 class="font bold white-heading col-xl-3">Salary items</h2>
+                    <RadzenButton class="col-xl-1 btn-primary" Click="AddNewSalaryItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                </div>
+                <div class="col-sm-12 my-5 crd-primary">
+                    <RadzenChart>
+                        <RadzenLineSeries Smooth="true" Data="@SalaryUpdateViewModel.salaryUpdateItems" CategoryProperty="Date" Title="Salary" ValueProperty="Amount">
+                            <RadzenMarkers MarkerType="MarkerType.Circle" />
+                        </RadzenLineSeries>
+                        <RadzenCategoryAxis Padding="20" FormatString="{0:MMM}" />
+                        <RadzenValueAxis Formatter="@FormatAsGBP">
+                            <RadzenGridLines Visible="true" />
+                            <RadzenAxisTitle Text="Revenue in GBP" />
+                        </RadzenValueAxis>
+                    </RadzenChart>
+                </div>
+            </div>
+            <div class="row">
+                <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
+                <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                <RadzenButton class="col-xl-1 btn-primary" Click="EditBudgetSettings" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+            </div>
+            <div class="row">
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@budget.budgetLineItems" TItem="BudgetLineItemModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="BudgetLineName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Cost" Title="Cost" Width="140px"  />
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category.Name" Title="Category" Width="140px" />
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod.Name" Title="Payment Method" Width="140px"/>
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
         </div>
-        <div class="col-sm-12 col-lg-6 col-xl-4 my-5 crd-primary">
-            <RadzenChart>
-                <RadzenPieSeries Data="@budget.CostPerCategory" Title="Revenue" CategoryProperty="Key" ValueProperty="Value" />
-            </RadzenChart>
-        </div>
-        <div class="row">
-            <h2 class="font bold white-heading col-xl-3">Salary items</h2>
-            <RadzenButton class="col-xl-1 btn-primary" Click="AddNewSalaryItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-        </div>
-        <div class="col-sm-12 my-5 crd-primary">
-            <RadzenChart>
-                <RadzenLineSeries Smooth="true" Data="@SalaryUpdateViewModel.salaryUpdateItems" CategoryProperty="Date" Title="Salary" ValueProperty="Amount">
-                    <RadzenMarkers MarkerType="MarkerType.Circle" />
-                </RadzenLineSeries>
-                <RadzenCategoryAxis Padding="20" FormatString="{0:MMM}" />
-                <RadzenValueAxis Formatter="@FormatAsGBP">
-                    <RadzenGridLines Visible="true" />
-                    <RadzenAxisTitle Text="Revenue in GBP" />
-                </RadzenValueAxis>
-            </RadzenChart>
-        </div>
-    </div>
-    <div class="row">
-        <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
-        <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-        <RadzenButton class="col-xl-1 btn-primary" Click="EditBudgetSettings" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-    </div>
-    <div class="row">
-        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-            Data="@budget.budgetLineItems" TItem="BudgetLineItemModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-            <Columns>
-                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="BudgetLineName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Cost" Title="Cost" Width="140px"  />
-                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category.Name" Title="Category" Width="140px" />
-                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod.Name" Title="Payment Method" Width="140px"/>
-                <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
-            </Columns>
-        </RadzenDataGrid>
-    </div>
-</div>
+    @* </div> *@
+@* </div> *@
 
 
 @code {
@@ -80,6 +116,7 @@
 
     protected override async Task OnInitializedAsync() {
 
+        await AuthService.OnLoginSucceeded();
         budget.GetBudgetLineItems();
         await SalaryUpdateViewModel.GetSalaryUpdateItems();
         await budget.GetBudgetSettingsForUser();
