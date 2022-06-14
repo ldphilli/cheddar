@@ -73,7 +73,7 @@ namespace Cheddar.Function {
                 
                 if(allBudgetSettingsForUser != null)
                 {
-                    return new OkObjectResult(allBudgetSettingsForUser.First());
+                    return new OkObjectResult(allBudgetSettingsForUser.FirstOrDefault());
                 }
                 else{
                     return new BadRequestObjectResult("Failed to find records.");
