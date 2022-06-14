@@ -14,7 +14,10 @@
                 <img src="@imageSource" style="width: 40px">
             </a>
             <ul class="dropdown-menu">
-                <li role="presentation"><a role="menuitem" class="dropdown-item" tabindex="-1" href="authentication">Logout</a></li>
+                <li role="presentation">
+                    <span role="menuitem" class="dropdown-item" tabindex="-1" @onclick="BeginSignOut">Logout
+                    </span>
+                </li>
             </ul>
         </div>
     </div>
@@ -24,8 +27,15 @@
 
     private string? imageSource;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
 
         imageSource = $"images/user-solid.svg";
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
     }
 }
