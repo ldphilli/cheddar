@@ -81,7 +81,7 @@ namespace Cheddar.Function
 
                 if (allBudgetSettingsForUser != null)
                 {
-                    return new OkObjectResult(allBudgetSettingsForUser.FirstOrDefault());
+                    return new OkObjectResult(allBudgetSettingsForUser.FirstOrDefault() ?? new BudgetSettingsModel());
                 }
                 else
                 {
