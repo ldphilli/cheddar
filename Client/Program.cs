@@ -18,19 +18,13 @@ builder.Services
     .AddHttpClient("WebAPI", client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>().ConfigureHandler(authorizedUrls: new[] { baseAddress.ToString() }));
 
-builder.Services
-    .AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"))
-    .AddSingleton<ApplicationState>();
-
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
 builder.Services.AddTransient<BudgetSettingsService>();
-builder.Services.AddTransient<AuthenticationService>();
 builder.Services.AddTransient<SalaryUpdateViewModel>();
-builder.Services.AddTransient<BudgetLineItemVM>();
+builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
-builder.Services.AddTransient<BudgetVM>();
 builder.Services.AddTransient<WelcomeViewModel>();
-builder.Services.AddTransient<AuthenticationService>();
-//Add application state model as a singleton
+builder.Services.AddTransient<BudgetViewModel>();
 builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddMsalAuthentication(options =>
 {

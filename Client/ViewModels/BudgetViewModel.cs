@@ -7,7 +7,7 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 
 namespace Cheddar.Client.ViewModels {
-    public class BudgetVM {
+    public class BudgetViewModel {
 
         private readonly HttpClient ApiClient;
         private readonly IHttpClientFactory _factory;
@@ -16,7 +16,7 @@ namespace Cheddar.Client.ViewModels {
         private readonly NavigationManager nvm;
         public BudgetSettingsService budgetSettingsService;
 
-        public BudgetVM(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
+        public BudgetViewModel(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
         {
             ApiClient = apiClient;
             _factory = factory;

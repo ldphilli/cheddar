@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels
 {
-    public class BudgetLineItemVM
+    public class BudgetLineItemViewModel
     {
         public BudgetLineItemModel bliModel { get; set; }
         public List<BudgetCategoriesModel> budgetCategories = new List<BudgetCategoriesModel>();
@@ -14,7 +14,7 @@ namespace Cheddar.Client.ViewModels
         private readonly HttpClient ApiClient;
 
         private readonly ApplicationState appState;
-        public BudgetLineItemVM(HttpClient apiClient, ApplicationState applicationState)
+        public BudgetLineItemViewModel(HttpClient apiClient, ApplicationState applicationState)
         {
             ApiClient = apiClient;
             bliModel = new BudgetLineItemModel();
