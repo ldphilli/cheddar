@@ -20,8 +20,6 @@ namespace Cheddar.Client.ViewModels
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
             appState = applicationState;
-
-            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
         }
 
         public async Task GetBudgetCatgories()

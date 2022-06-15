@@ -23,8 +23,6 @@ namespace Cheddar.Client.ViewModels {
             nvm = navManager;
             appState = applicationState;
             budgetSettingsService = bsService;
-
-            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
         }
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();

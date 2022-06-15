@@ -20,8 +20,6 @@ namespace Cheddar.Client.ViewModels
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
             ApiClient = apiClient;
             appState = applicationState;
-
-            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
         }
 
         public async Task AddItemsToContainerAsync(SalaryUpdateModel salaryItem, NavigationManager nvm)
