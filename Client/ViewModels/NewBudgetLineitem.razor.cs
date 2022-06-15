@@ -1,12 +1,15 @@
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace Cheddar.Client.ViewModels {
-    public class BudgetLineItemVM {
+namespace Cheddar.Client.ViewModels
+{
+    public class BudgetLineItemVM
+    {
         public BudgetLineItemModel bliModel { get; set; }
         public List<BudgetCategoriesModel> budgetCategories = new List<BudgetCategoriesModel>();
-        
+
         public List<PaymentMethodsModel> paymentMethods = new List<PaymentMethodsModel>();
         private readonly HttpClient ApiClient;
 
@@ -17,18 +20,18 @@ namespace Cheddar.Client.ViewModels {
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
             appState = applicationState;
+
+            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
         }
 
-        public async Task GetBudgetCatgories() {
-
-            string request = String.Concat("api/GetBudgetCategoriesForUser?claim=", appState.Token);
-            budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>(request);
+        public async Task GetBudgetCatgories()
+        {
+            budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>("api/GetBudgetCategoriesForUser");
         }
 
-        public async Task GetPaymentMethods() {
-
-            string request = String.Concat("api/GetPaymentMethodsForUser?claim=", appState.Token);
-            paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>(request);
+        public async Task GetPaymentMethods()
+        {
+            paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>("api/GetPaymentMethodsForUser");
         }
 
     }

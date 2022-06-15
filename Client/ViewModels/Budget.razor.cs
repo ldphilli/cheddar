@@ -4,6 +4,7 @@ using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetVM {
@@ -22,6 +23,8 @@ namespace Cheddar.Client.ViewModels {
             nvm = navManager;
             appState = applicationState;
             budgetSettingsService = bsService;
+
+            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
         }
 
         public List<BudgetLineItemModel>? budgetLineItems = new List<BudgetLineItemModel>();
@@ -36,20 +39,14 @@ namespace Cheddar.Client.ViewModels {
         /// </summary>
         public async Task AddItemsToContainerAsync(BudgetLineItemModel budgetLineItem, NavigationManager nvm) {
 
-            //var httpClient = _factory.CreateClient("api/CreateBudgetLineItem");
-            string request = String.Concat("api/CreateBudgetLineItem?claim=", appState.Token);
-            await ApiClient.PostAsJsonAsync(request, budgetLineItem);
+            await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", budgetLineItem);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetBudgetLineItems() {
             
             try {
-                //var httpClient = _factory.CreateClient("WebAPI");
-                //Console.WriteLine("Entered into Budget GetBudgetLineItems");
-                string request = String.Concat("api/GetBudgetLineItems?claim=", appState.Token);
-                //Console.WriteLine(request);
-                budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>(request);
+                budgetLineItems = await ApiClient.GetFromJsonAsync<List<BudgetLineItemModel>>("api/GetBudgetLineItems");
                 CalculateExpenditureByCategories();
             }
             catch (AccessTokenNotAvailableException exception) {

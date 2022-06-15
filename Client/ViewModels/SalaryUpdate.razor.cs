@@ -1,9 +1,12 @@
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace Cheddar.Client.ViewModels {
-    public class SalaryUpdateViewModel {
+namespace Cheddar.Client.ViewModels
+{
+    public class SalaryUpdateViewModel
+    {
 
         private readonly HttpClient ApiClient;
         private ApplicationState appState;
@@ -17,19 +20,19 @@ namespace Cheddar.Client.ViewModels {
             salaryUpdateModel.Id = Guid.NewGuid().ToString();
             ApiClient = apiClient;
             appState = applicationState;
-        }
-        
-        public async Task AddItemsToContainerAsync(SalaryUpdateModel salaryItem, NavigationManager nvm) {
 
-            string request = String.Concat("api/CreateSalaryChangeItem?claim=", appState.Token);
-            await ApiClient.PostAsJsonAsync(request, salaryItem);
+            ApiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",appState.Token ?? "");
+        }
+
+        public async Task AddItemsToContainerAsync(SalaryUpdateModel salaryItem, NavigationManager nvm)
+        {
+            await ApiClient.PostAsJsonAsync("api/CreateSalaryChangeItem", salaryItem);
             nvm.NavigateTo("/budget");
         }
 
-        public async Task GetSalaryUpdateItems() {
-
-            string request = String.Concat("api/GetSalaryUpdateItems?claim=", appState.Token);
-            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<SalaryUpdateModel>>(request);
-        }  
+        public async Task GetSalaryUpdateItems()
+        {
+            salaryUpdateItems = await ApiClient.GetFromJsonAsync<List<SalaryUpdateModel>>("api/GetSalaryUpdateItems");
+        }
     }
 }
