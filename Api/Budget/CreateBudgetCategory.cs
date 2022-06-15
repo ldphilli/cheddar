@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
+using System.Linq;
 
 namespace Cheddar.Function
 {
@@ -27,18 +28,15 @@ namespace Cheddar.Function
                 Connection = "CosmosDBConnection")]IAsyncCollector<BudgetCategoriesModel> documentsOut,
         ILogger log)
     {
-
-      string token = req.Query["claim"];
-      if(token != null) {
-         log.LogInformation(token);
-      } else {
+      if(!req.Headers.TryGetValue("Authorization", out var token)) {
         return new BadRequestObjectResult("No token found");
+         
       }
 
       // Parse json back to budget line item model type
       var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
       var item = JsonConvert.DeserializeObject<BudgetCategoriesModel>(requestBody);
-      string userId = manageToken.GetUserIdFromToken(token);
+      string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
       if(userId != null || userId != string.Empty) {
         item.UserId = userId;
       }

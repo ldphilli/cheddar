@@ -13,46 +13,45 @@ using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function
 {
-  public static class CreateOrUpdateBudgetSettings
-  {
+    public static class CreateOrUpdateBudgetSettings
+    {
 
-    private static jwtManagementToken manageToken = new jwtManagementToken();
+        private static jwtManagementToken manageToken = new jwtManagementToken();
 
-    [FunctionName("CreateOrUpdateBudgetSettingsDoc")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        [CosmosDB(
+        [FunctionName("CreateOrUpdateBudgetSettingsDoc")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetSettingsContainerName,
                 Connection = "CosmosDBConnection")]IAsyncCollector<BudgetSettingsModel> documentsOut,
-        ILogger log)
-    {
+            ILogger log)
+        {
 
-      string token = req.Query["claim"];
-        if(token != null) {
-          log.LogInformation(token);
-        } else {
-          return new BadRequestObjectResult("No token found");
+            if (!req.Headers.TryGetValue("Authorization", out var token))
+            {
+                return new BadRequestObjectResult("No token found");
+            }
+
+            // Parse json back to budget line item model type
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var item = JsonConvert.DeserializeObject<BudgetSettingsModel>(requestBody);
+            string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+            if (userId != null || userId != string.Empty)
+            {
+                item.userId = userId;
+            }
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            try
+            {
+                await documentsOut.AddAsync(item);
+            }
+            catch (Exception ex)
+            {//when (ex.Status == (int)HttpStatusCode.NotFound)
+
+            }
+            return new OkObjectResult("Success!");
         }
-
-      // Parse json back to budget line item model type
-      var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-      var item = JsonConvert.DeserializeObject<BudgetSettingsModel>(requestBody);
-      string userId = manageToken.GetUserIdFromToken(token);
-      if(userId != null || userId != string.Empty) {
-        item.userId = userId;
-      }
-      log.LogInformation("C# HTTP trigger function processed a request.");
-
-      try
-      {
-        await documentsOut.AddAsync(item);
-      }
-      catch (Exception ex)
-      {//when (ex.Status == (int)HttpStatusCode.NotFound)
-
-      }
-      return new OkObjectResult("Success!");
     }
-  }
 }

@@ -13,8 +13,10 @@ using System.IO;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
-namespace Cheddar.Function {
-    public static class CreateSalaryChangeItem {
+namespace Cheddar.Function
+{
+    public static class CreateSalaryChangeItem
+    {
 
         private static jwtManagementToken manageToken = new jwtManagementToken();
 
@@ -25,20 +27,24 @@ namespace Cheddar.Function {
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.SalaryUpdateItemsContainerName,
                 Connection = "CosmosDBConnection")]IAsyncCollector<SalaryUpdateModel> documentsOut,
-            ILogger log) {
+            ILogger log)
+        {
 
-                string token = req.Query["claim"];
-                if(token != null) {
-                    log.LogInformation(token);
-                } else {
-                    return new BadRequestObjectResult("No token found");
-                }
+            if (req.Headers.TryGetValue("Authorization", out var token))
+            {
+                log.LogInformation(token);
+            }
+            else
+            {
+                return new BadRequestObjectResult("No token found");
+            }
 
             // Parse json back to budget line item model type
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var item = JsonConvert.DeserializeObject<SalaryUpdateModel>(requestBody);
-            string userId = manageToken.GetUserIdFromToken(token);
-            if(userId != null || userId != string.Empty) {
+            string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+            if (userId != null || userId != string.Empty)
+            {
                 item.UserId = userId;
             }
             log.LogInformation("C# HTTP trigger function processed a request.");
