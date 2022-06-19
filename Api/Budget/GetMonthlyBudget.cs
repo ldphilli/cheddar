@@ -29,10 +29,8 @@ namespace Cheddar.Function {
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log) {
 
-            string token = req.Query["claim"];
-            if(token != null) {
-                log.LogInformation(token);
-            } else {
+            if (!req.Headers.TryGetValue("Authorization", out var token))
+            {
                 return new BadRequestObjectResult("No token found");
             }
 
@@ -44,7 +42,7 @@ namespace Cheddar.Function {
             log.LogInformation("C# HTTP trigger function processed a request on GetMonthlyIncome.");
             try {
                 List<MonthlyBudgetModel> allMonthlyBudgetItemsForUser = new List<MonthlyBudgetModel>();
-                string userId = manageToken.GetUserIdFromToken(token);
+                string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
                 if(userId != null || userId != string.Empty) {
                 //Setup query to database, get all budget line items for current user
                     QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.userId = @userId and c.Month = @month and c.Year = @year")
