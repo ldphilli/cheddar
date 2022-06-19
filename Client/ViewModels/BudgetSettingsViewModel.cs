@@ -3,8 +3,10 @@ using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace Cheddar.Client.ViewModels {
-    public class BudgetSettingsViewModel {
+namespace Cheddar.Client.ViewModels
+{
+    public class BudgetSettingsViewModel
+    {
 
         private readonly HttpClient ApiClient;
         private ApplicationState appState;
@@ -37,33 +39,34 @@ namespace Cheddar.Client.ViewModels {
             //remainingExpenditureCategoriesModel.UserId = 2;
         }
 
-        public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory, NavigationManager nvm) {
-
-            string request = String.Concat("api/CreateBudgetCategory?claim=", appState.Token);
+        public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory, NavigationManager nvm)
+        {
             await ApiClient.PostAsJsonAsync("api/CreateBudgetCategory", budgetCategory);
             nvm.NavigateTo("/budget");
         }
 
-        public async Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod, NavigationManager nvm) {
-            
-            string request = String.Concat("api/CreatePaymentMethod?claim=", appState.Token);
-            await ApiClient.PostAsJsonAsync(request, paymentMethod);
+        public async Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod, NavigationManager nvm)
+        {
+            await ApiClient.PostAsJsonAsync("api/CreatePaymentMethod", paymentMethod);
             nvm.NavigateTo("/budget");
         }
 
-        public async Task GetBudgetSettingDataForUser() {
+        public async Task GetBudgetSettingDataForUser()
+        {
 
             appState.budgetSettingsModel = await budgetSettingsService.GetMonthlyIncome();
         }
 
-        public async Task CreateOrUpdateMonthlyIncome() {
+        public async Task CreateOrUpdateMonthlyIncome()
+        {
 
             await budgetSettingsService.CreateOrUpdateBudgetSettingsDoc(budgetSettingsModel);
             await GetBudgetSettingDataForUser();
             nvm.NavigateTo("/budget");
         }
 
-        public async Task CreateRemainingExpenditureCategory() {
+        public async Task CreateRemainingExpenditureCategory()
+        {
 
             await budgetSettingsService.CreateRemainingExpenditureCategoriesDoc(remainingExpenditureCategoriesModel);
             nvm.NavigateTo("/budget");

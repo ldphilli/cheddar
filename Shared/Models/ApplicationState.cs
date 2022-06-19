@@ -4,8 +4,5 @@ using Newtonsoft.Json;
 namespace Cheddar.Shared.Models {
     public class ApplicationState {
         public BudgetSettingsModel budgetSettingsModel = new BudgetSettingsModel();//{ get; set; }
-
-        public string? Token { get; set; }
-        public string? Name { get; set; }
     }
 }
