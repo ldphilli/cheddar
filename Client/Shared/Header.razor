@@ -1,0 +1,41 @@
+@inject HeaderViewModel HeaderVM
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+<div class="row">
+    <div class="col-xl-3">
+        <p class="font bold white-heading">@HeaderVM.timeOfDayAsText </p>
+    </div>
+    <div class="col-xl-9 my-xl-auto">
+        <i data-feather="bell"></i>
+        <div class="dropdown justify-content-center">
+            <a href="#" id="imageDropdown" data-bs-toggle="dropdown">
+                <img src="@imageSource" style="width: 40px">
+            </a>
+            <ul class="dropdown-menu">
+                <li role="presentation">
+                    <span role="menuitem" class="dropdown-item" tabindex="-1" @onclick="BeginSignOut">Logout
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private string? imageSource;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        imageSource = $"images/user-solid.svg";
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+}
