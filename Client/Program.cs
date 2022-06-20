@@ -25,6 +25,7 @@ builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
+builder.Services.AddTransient<HeaderViewModel>();
 builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddMsalAuthentication(options =>
 {
