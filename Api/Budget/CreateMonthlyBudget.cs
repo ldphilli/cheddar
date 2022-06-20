@@ -40,7 +40,6 @@ namespace Cheddar.Function
         
         log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-        string token = req.Query["claim"];
         if (!req.Headers.TryGetValue("Authorization", out var token))
         {
             return new BadRequestObjectResult("No token found");
