@@ -1,6 +1,6 @@
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components;
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 
 namespace Cheddar.Client.ViewModels
 {

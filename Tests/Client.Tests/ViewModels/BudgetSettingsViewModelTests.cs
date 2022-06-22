@@ -1,4 +1,4 @@
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 using Cheddar.Client.ViewModels;
 using Cheddar.Shared.Models;
 using Cheddar.Tests;

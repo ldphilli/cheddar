@@ -1,8 +1,14 @@
 
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 
 namespace Cheddar.Client.Services
 {
+  public interface IClockService
+  {
+    DateTime Now { get; }
+    DateTime UtcNow { get; }
+  }
+  
   public class ClockService : IClockService
   {
     public DateTime Now => DateTime.Now;

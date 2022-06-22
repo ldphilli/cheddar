@@ -2,7 +2,7 @@ using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetViewModel {

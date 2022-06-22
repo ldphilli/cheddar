@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorApp.Client;
@@ -6,7 +5,6 @@ using Cheddar.Client.Services;
 using Cheddar.Client.ViewModels;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Cheddar.Client.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -27,7 +25,7 @@ builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
-builder.Services.AddTransient<HeaderViewModel>();
+builder.Services.AddTransient<IHeaderViewModel, HeaderViewModel>();
 builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddMsalAuthentication(options =>
 {

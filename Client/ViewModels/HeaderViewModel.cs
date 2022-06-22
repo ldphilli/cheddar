@@ -1,8 +1,15 @@
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 
 namespace Cheddar.Client.ViewModels
 {
-  public class HeaderViewModel
+  public interface IHeaderViewModel
+  {
+    string timeOfDayAsText { get; }
+
+    void ConvertTimeOfDayToText();
+  }
+
+  public class HeaderViewModel : IHeaderViewModel
   {
     private readonly IClockService clock;
 
@@ -17,7 +24,7 @@ namespace Cheddar.Client.ViewModels
     public void ConvertTimeOfDayToText()
     {
       int hour = clock.Now.Hour;
-      
+
       if (hour >= 1 && hour <= 11)
       {
         timeOfDayAsText = "Good morning";

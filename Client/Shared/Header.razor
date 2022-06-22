@@ -1,7 +1,7 @@
-@inject HeaderViewModel HeaderVM
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject IHeaderViewModel HeaderVM
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <div class="row">
     <div class="col-xl-3">
@@ -15,7 +15,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li role="presentation">
-                    <span role="menuitem" class="dropdown-item" tabindex="-1" @onclick="BeginSignOut">Logout
+                    <span id="menu-item-logout" role="menuitem" class="dropdown-item" tabindex="-1" @onclick="BeginSignOut">Logout
                     </span>
                 </li>
             </ul>

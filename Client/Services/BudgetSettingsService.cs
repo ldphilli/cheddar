@@ -1,9 +1,22 @@
-using Cheddar.Client.Services.Interfaces;
+using Cheddar.Client.Services;
 using Cheddar.Shared.Models;
 using System.Net.Http.Json;
 
 namespace Cheddar.Client.Services
 {
+  public interface IBudgetSettingsService
+  {
+    Task<BudgetSettingsModel?> GetMonthlyIncome();
+
+    Task CreateOrUpdateBudgetSettingsDoc(BudgetSettingsModel budgetSettings);
+
+    Task CreateRemainingExpenditureCategoriesDoc(RemainingExpenditureCategoriesModel remainingExpenditureCategory);
+
+    Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory);
+
+    Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod);
+  }
+  
   public class BudgetSettingsService : IBudgetSettingsService
   {
 
