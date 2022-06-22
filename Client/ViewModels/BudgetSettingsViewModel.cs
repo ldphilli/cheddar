@@ -1,26 +1,22 @@
 using Cheddar.Shared.Models;
-using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http.Json;
+using Cheddar.Client.Services.Interfaces;
 
 namespace Cheddar.Client.ViewModels
 {
     public class BudgetSettingsViewModel
     {
-
-        private readonly HttpClient ApiClient;
         private ApplicationState appState;
         public BudgetCategoriesModel budgetCategoryModel { get; set; }
         public PaymentMethodsModel paymentMethodModel { get; set; }
         public RemainingExpenditureCategoriesModel remainingExpenditureCategoriesModel { get; set; }
         public BudgetSettingsModel budgetSettingsModel => appState.budgetSettingsModel;
-        public BudgetSettingsService budgetSettingsService;
+        public IBudgetSettingsService budgetSettingsService;
 
         private readonly NavigationManager nvm;
 
-        public BudgetSettingsViewModel(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
+        public BudgetSettingsViewModel(NavigationManager navManager, ApplicationState applicationState, IBudgetSettingsService bsService)
         {
-            ApiClient = apiClient;
             nvm = navManager;
             appState = applicationState;
             budgetSettingsService = bsService;
@@ -36,30 +32,27 @@ namespace Cheddar.Client.ViewModels
 
             remainingExpenditureCategoriesModel = new RemainingExpenditureCategoriesModel();
             remainingExpenditureCategoriesModel.Id = Guid.NewGuid().ToString();
-            //remainingExpenditureCategoriesModel.UserId = 2;
         }
 
-        public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory, NavigationManager nvm)
+        public async Task AddBudgetCategoryToContainerAsync(BudgetCategoriesModel budgetCategory)
         {
-            await ApiClient.PostAsJsonAsync("api/CreateBudgetCategory", budgetCategory);
+            await budgetSettingsService.AddBudgetCategoryToContainerAsync(budgetCategory);
             nvm.NavigateTo("/budget");
         }
 
-        public async Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod, NavigationManager nvm)
+        public async Task AddPaymentMethodToContainerAsync(PaymentMethodsModel paymentMethod)
         {
-            await ApiClient.PostAsJsonAsync("api/CreatePaymentMethod", paymentMethod);
+            await budgetSettingsService.AddPaymentMethodToContainerAsync(paymentMethod);
             nvm.NavigateTo("/budget");
         }
 
         public async Task GetBudgetSettingDataForUser()
         {
-
             appState.budgetSettingsModel = await budgetSettingsService.GetMonthlyIncome();
         }
 
         public async Task CreateOrUpdateMonthlyIncome()
         {
-
             await budgetSettingsService.CreateOrUpdateBudgetSettingsDoc(budgetSettingsModel);
             await GetBudgetSettingDataForUser();
             nvm.NavigateTo("/budget");
@@ -67,7 +60,6 @@ namespace Cheddar.Client.ViewModels
 
         public async Task CreateRemainingExpenditureCategory()
         {
-
             await budgetSettingsService.CreateRemainingExpenditureCategoriesDoc(remainingExpenditureCategoriesModel);
             nvm.NavigateTo("/budget");
         }

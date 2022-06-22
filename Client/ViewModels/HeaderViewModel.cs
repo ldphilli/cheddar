@@ -1,9 +1,3 @@
-using Cheddar.Shared.Models;
-using Cheddar.Client.ViewModels;
-using Cheddar.Client.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using System.Net.Http.Json;
 using Cheddar.Client.Services.Interfaces;
 
 namespace Cheddar.Client.ViewModels

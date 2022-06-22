@@ -20,7 +20,7 @@ builder.Services
     .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>().ConfigureHandler(authorizedUrls: new[] { baseAddress.ToString() }));
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
-builder.Services.AddTransient<BudgetSettingsService>();
+builder.Services.AddTransient<IBudgetSettingsService, BudgetSettingsService>();
 builder.Services.AddTransient<IClockService, ClockService>();
 builder.Services.AddTransient<SalaryUpdateViewModel>();
 builder.Services.AddTransient<BudgetLineItemViewModel>();

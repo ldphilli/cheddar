@@ -1,10 +1,8 @@
 using Cheddar.Shared.Models;
-using Cheddar.Client.ViewModels;
-using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
-using System.Net.Http.Headers;
+using Cheddar.Client.Services.Interfaces;
 
 namespace Cheddar.Client.ViewModels {
     public class BudgetViewModel {
@@ -14,9 +12,9 @@ namespace Cheddar.Client.ViewModels {
         private readonly ApplicationState appState;
         //private static readonly Lazy<ApplicationState> appState = new Lazy<ApplicationState>(() => new ApplicationState());
         private readonly NavigationManager nvm;
-        public BudgetSettingsService budgetSettingsService;
+        public IBudgetSettingsService budgetSettingsService;
 
-        public BudgetViewModel(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, BudgetSettingsService bsService)
+        public BudgetViewModel(HttpClient apiClient, IHttpClientFactory factory, NavigationManager navManager, ApplicationState applicationState, IBudgetSettingsService bsService)
         {
             ApiClient = apiClient;
             _factory = factory;
