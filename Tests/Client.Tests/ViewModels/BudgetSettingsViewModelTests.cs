@@ -1,11 +1,10 @@
+using Bunit;
+using Bunit.TestDoubles;
 using Cheddar.Client.Services;
 using Cheddar.Client.ViewModels;
 using Cheddar.Shared.Models;
-using Cheddar.Tests;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Moq;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,6 +12,7 @@ namespace Client.Tests;
 
 public class BudgetSettingsViewModelTests
 {
+  private TestContext context; 
   private readonly FakeNavigationManager navigationManager;
   private readonly Mock<IBudgetSettingsService> budgetSettingsServiceMock;
   private readonly ApplicationState applicationState;
@@ -20,8 +20,9 @@ public class BudgetSettingsViewModelTests
 
   public BudgetSettingsViewModelTests()
   {
+    context = new TestContext();
     budgetSettingsServiceMock = new Mock<IBudgetSettingsService>();
-    navigationManager = new FakeNavigationManager();
+    navigationManager = new FakeNavigationManager(context.Renderer);
     applicationState = new ApplicationState();
 
     systemUnderTest = new BudgetSettingsViewModel(
