@@ -6,6 +6,7 @@ using Cheddar.Client.Services;
 using Cheddar.Client.ViewModels;
 using Cheddar.Shared.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Cheddar.Client.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,6 +21,7 @@ builder.Services
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
 builder.Services.AddTransient<BudgetSettingsService>();
+builder.Services.AddTransient<IClockService, ClockService>();
 builder.Services.AddTransient<SalaryUpdateViewModel>();
 builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
