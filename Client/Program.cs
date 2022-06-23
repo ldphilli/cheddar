@@ -12,21 +12,28 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var baseAddress = new Uri(builder.Configuration["API_Prefix"] ?? builder.HostEnvironment.BaseAddress);
-//Console.WriteLine("Base Address: " + baseAddress);
 
 builder.Services
     .AddHttpClient("WebAPI", client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>().ConfigureHandler(authorizedUrls: new[] { baseAddress.ToString() }));
 
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
+// Service registrations
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
+builder.Services.AddSingleton<ApplicationState>();
 builder.Services.AddTransient<BudgetSettingsService>();
+
+// View Model registrations
+builder.Services.AddTransient<IIndexViewModel, IndexViewModel>();
 builder.Services.AddTransient<SalaryUpdateViewModel>();
 builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
 builder.Services.AddTransient<HeaderViewModel>();
-builder.Services.AddSingleton<ApplicationState>();
+
+
+// Authentication
+builder.Services.AddAuthorizationCore();
 builder.Services.AddMsalAuthentication(options =>
 {
   builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
