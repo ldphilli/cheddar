@@ -49,6 +49,25 @@ Once you clone the project, open the solution in [Visual Studio 2022](https://vi
 - **Shared**: A C# class library with a shared data model between the Blazor and Functions application
 - **ApiIsolated**: A C# Azure Functions API using the .NET isolated execution model, which the Blazor application will call. This version can be used instead of the in-process function app in `Api`.
 
+## Testing
+
+### General
+
+This project uses: 
+- [xUnit](https://xunit.net/) as the test framework.
+- [Moq](https://github.com/moq/moq) for mocking other classes.
+- [FluentAssertions](https://fluentassertions.com/) for asserting values are correct.
+
+The tests can be run using:
+```bash
+dotnet test
+```
+
+### Client (Blazor)
+
+To support the testing of the Blazor client [bUnit](https://bunit.dev/docs/getting-started/index.html) is used.
+
+
 ## Deploy to Azure Static Web Apps
 
 This application can be deployed to [Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps), to learn how, check out [our quickstart guide](https://aka.ms/blazor-swa/quickstart).

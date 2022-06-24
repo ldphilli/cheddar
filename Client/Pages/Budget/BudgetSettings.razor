@@ -1,7 +1,5 @@
 @page "/budget-settings"
-@inject NavigationManager NavManager
 @inject BudgetSettingsViewModel BudgetSettingsViewModel
-@inject BudgetSettingsService BudgetSettingsService
 
 <PageTitle>Budget Settings</PageTitle>
 
@@ -9,47 +7,59 @@
     <h2 class="font bold white-heading">Budget Categories</h2>
     <div class="row">
         <RadzenCard>
-            <RadzenTextBox Placeholder="Entertainment" @bind-Value="@BudgetSettingsViewModel.budgetCategoryModel.Name" />
+            <RadzenTextBox Placeholder="Entertainment"
+                @bind-Value="@BudgetSettingsViewModel.budgetCategoryModel.Name" />
         </RadzenCard>
-        <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.AddBudgetCategoryToContainerAsync(BudgetSettingsViewModel.budgetCategoryModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-3"
+            Click="@(() => BudgetSettingsViewModel.AddBudgetCategoryToContainerAsync(BudgetSettingsViewModel.budgetCategoryModel))"
+            Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <h2 class="font bold white-heading">Budget Payment Methods</h2>
         <RadzenCard>
-            <RadzenTextBox Placeholder="Lloyds" @bind-Value="@BudgetSettingsViewModel.paymentMethodModel.Name" />
+            <RadzenTextBox Placeholder="Lloyds" 
+                @bind-Value="@BudgetSettingsViewModel.paymentMethodModel.Name" />
         </RadzenCard>
-        <RadzenButton class="col-xl-3" Click="@(() => BudgetSettingsViewModel.AddPaymentMethodToContainerAsync(BudgetSettingsViewModel.paymentMethodModel, NavManager))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-3"
+            Click="@(() => BudgetSettingsViewModel.AddPaymentMethodToContainerAsync(BudgetSettingsViewModel.paymentMethodModel))"
+            Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
     <div class="row">
         <h2 class="font bold white-heading">Monthly Income</h2>
         <div class="col-md-6 col-lg-4 p-3">
             <RadzenCard>
-                <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyIncome"/>
+                <RadzenNumeric TValue="double" Placeholder="14.99"
+                    @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyIncome" />
             </RadzenCard>
             <RadzenCard>
-                <RadzenNumeric TValue="int" Placeholder="28" @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyBudgetDay"/>
+                <RadzenNumeric TValue="int" Placeholder="28"
+                    @bind-Value="@BudgetSettingsViewModel.budgetSettingsModel.MonthlyBudgetDay" />
             </RadzenCard>
-            <RadzenButton class="col-xl-3" Click="@BudgetSettingsViewModel.CreateOrUpdateMonthlyIncome" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+            <RadzenButton class="col-xl-3" Click="@BudgetSettingsViewModel.CreateOrUpdateMonthlyIncome" Text="Save"
+                ButtonStyle="ButtonStyle.Primary"></RadzenButton>
         </div>
     </div>
     <div class="row">
         <h2 class="font bold white-heading">Remaining Expenditure Categories</h2>
         <RadzenCard>
             <h4 class="mb-4">Category Name</h4>
-            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.CategoryName" />
+            <RadzenTextBox Placeholder="Apple Music"
+                @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.CategoryName" />
         </RadzenCard>
         <RadzenCard>
             <h4 class="mb-4">Remaining budget %</h4>
-            <RadzenNumeric TValue="int" Placeholder="10" @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.Percentage" />
+            <RadzenNumeric TValue="int" Placeholder="10"
+                @bind-Value="@BudgetSettingsViewModel.remainingExpenditureCategoriesModel.Percentage" />
         </RadzenCard>
-        <RadzenButton class="col-xl-3" Click="@BudgetSettingsViewModel.CreateRemainingExpenditureCategory" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        <RadzenButton class="col-xl-3" Click="@BudgetSettingsViewModel.CreateRemainingExpenditureCategory" Text="Save"
+            ButtonStyle="ButtonStyle.Primary"></RadzenButton>
     </div>
 </div>
 
 @code {
 
-    protected override async Task OnInitializedAsync() {
-
+    protected override async Task OnInitializedAsync()
+    {
         await BudgetSettingsViewModel.GetBudgetSettingDataForUser();
     }
 }

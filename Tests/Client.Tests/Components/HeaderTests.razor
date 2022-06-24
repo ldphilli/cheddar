@@ -1,0 +1,67 @@
+@using BlazorApp.Client.Shared
+@using Cheddar.Client.ViewModels
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inherits TestContext
+
+@code
+{
+  [Fact]
+  public void WhenRender_ThenTimeOfDayShouldBeDisplayed()
+  {
+    // Arrange
+    var headerViewModelMock = new Mock<IHeaderViewModel>();
+    headerViewModelMock.SetupGet(x => x.timeOfDayAsText).Returns("Time of Day");
+    Services.AddSingleton<IHeaderViewModel>(headerViewModelMock.Object);
+
+    var signOutManagerMock = new Mock<SignOutSessionStateManager>(null);
+    Services.AddSingleton<SignOutSessionStateManager>(signOutManagerMock.Object);
+
+    // Act
+    var cut = Render(@<Header />);
+
+    // Assert
+    cut.MarkupMatches(
+      @<div class="row">
+        <div class="col-xl-3">
+          <p class="font bold white-heading">Time of Day</p>
+        </div>
+        <div class="col-xl-9 my-xl-auto">
+          <i data-feather="bell"></i>
+          <div class="dropdown justify-content-center">
+            <a href="#" id="imageDropdown" data-bs-toggle="dropdown">
+              <img src="images/user-solid.svg" style="width: 40px">
+            </a>
+            <ul class="dropdown-menu">
+              <li role="presentation">
+                <span id="menu-item-logout" role="menuitem" class="dropdown-item" tabindex="-1">Logout
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  );
+  }
+
+  [Fact]
+  public async Task WhenLogoutClicked_ThenNavigateToLogout()
+  {
+    // Arrange
+    var headerViewModelMock = new Mock<IHeaderViewModel>();
+    Services.AddSingleton<IHeaderViewModel>(headerViewModelMock.Object);
+
+    var signOutManagerMock = new Mock<SignOutSessionStateManager>(null);
+    Services.AddSingleton<SignOutSessionStateManager>(signOutManagerMock.Object);
+
+    var navigationManager = Services.GetRequiredService<FakeNavigationManager>();
+
+    var cut = Render(@<Header />);
+
+    // Act
+    await cut.Find("#menu-item-logout").ClickAsync(null);
+
+    // Assert
+    signOutManagerMock.Verify(x => x.SetSignOutState());
+    navigationManager.Uri.Should().Be("http://localhost/authentication/logout");
+  }
+}

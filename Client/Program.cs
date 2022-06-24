@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorApp.Client;
@@ -17,10 +16,9 @@ builder.Services
     .AddHttpClient("WebAPI", client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>().ConfigureHandler(authorizedUrls: new[] { baseAddress.ToString() }));
 
-// Service registrations
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
-builder.Services.AddSingleton<ApplicationState>();
-builder.Services.AddTransient<BudgetSettingsService>();
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
+builder.Services.AddTransient<IBudgetSettingsService, BudgetSettingsService>();
+builder.Services.AddTransient<IClockService, ClockService>();
 
 // View Model registrations
 builder.Services.AddTransient<IIndexViewModel, IndexViewModel>();
@@ -29,11 +27,9 @@ builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
 builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
-builder.Services.AddTransient<HeaderViewModel>();
+builder.Services.AddTransient<IHeaderViewModel, HeaderViewModel>();
+builder.Services.AddSingleton<ApplicationState>();
 
-
-// Authentication
-builder.Services.AddAuthorizationCore();
 builder.Services.AddMsalAuthentication(options =>
 {
   builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);

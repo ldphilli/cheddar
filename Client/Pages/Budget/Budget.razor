@@ -1,9 +1,9 @@
-﻿@using System.Globalization;
+@using System.Globalization;
 @page "/budget"
 @inject NavigationManager NavManager
 @inject BudgetViewModel budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
-@inject BudgetSettingsService BudgetSettingsService
+@inject IBudgetSettingsService BudgetSettingsService
 @inject ApplicationState ApplicationState
 @attribute [Authorize]
 

@@ -1,7 +1,6 @@
 using Cheddar.Shared.Models;
 using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http.Json;
 
 namespace Cheddar.Client.ViewModels {
     public class MonthlyBudgetViewModel {
