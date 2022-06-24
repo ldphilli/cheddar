@@ -11,6 +11,7 @@
     // Arrange
     var headerViewModelMock = new Mock<IHeaderViewModel>();
     headerViewModelMock.SetupGet(x => x.timeOfDayAsText).Returns("Time of Day");
+    headerViewModelMock.SetupGet(x => x.userName).Returns("User Name");
     Services.AddSingleton<IHeaderViewModel>(headerViewModelMock.Object);
 
     var signOutManagerMock = new Mock<SignOutSessionStateManager>(null);
@@ -23,7 +24,7 @@
     cut.MarkupMatches(
       @<div class="row">
         <div class="col-xl-3">
-          <p class="font bold white-heading">Time of Day</p>
+          <p class="font bold white-heading">Time of Day, User Name</p>
         </div>
         <div class="col-xl-9 my-xl-auto">
           <i data-feather="bell"></i>
