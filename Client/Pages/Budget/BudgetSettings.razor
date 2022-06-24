@@ -17,7 +17,8 @@
     <div class="row">
         <h2 class="font bold white-heading">Budget Payment Methods</h2>
         <RadzenCard>
-            <RadzenTextBox Placeholder="Lloyds" @bind-Value="@BudgetSettingsViewModel.paymentMethodModel.Name" />
+            <RadzenTextBox Placeholder="Lloyds" 
+                @bind-Value="@BudgetSettingsViewModel.paymentMethodModel.Name" />
         </RadzenCard>
         <RadzenButton class="col-xl-3"
             Click="@(() => BudgetSettingsViewModel.AddPaymentMethodToContainerAsync(BudgetSettingsViewModel.paymentMethodModel))"
