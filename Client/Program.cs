@@ -11,7 +11,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var baseAddress = new Uri(builder.Configuration["API_Prefix"] ?? builder.HostEnvironment.BaseAddress);
-//Console.WriteLine("Base Address: " + baseAddress);
 
 builder.Services
     .AddHttpClient("WebAPI", client => client.BaseAddress = baseAddress)
@@ -20,6 +19,9 @@ builder.Services
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
 builder.Services.AddTransient<IBudgetSettingsService, BudgetSettingsService>();
 builder.Services.AddTransient<IClockService, ClockService>();
+
+// View Model registrations
+builder.Services.AddTransient<IIndexViewModel, IndexViewModel>();
 builder.Services.AddTransient<SalaryUpdateViewModel>();
 builder.Services.AddTransient<BudgetLineItemViewModel>();
 builder.Services.AddTransient<BudgetSettingsViewModel>();
@@ -27,6 +29,7 @@ builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
 builder.Services.AddTransient<IHeaderViewModel, HeaderViewModel>();
 builder.Services.AddSingleton<ApplicationState>();
+
 builder.Services.AddMsalAuthentication(options =>
 {
   builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
