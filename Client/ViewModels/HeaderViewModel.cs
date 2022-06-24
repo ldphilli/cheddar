@@ -1,4 +1,5 @@
 using Cheddar.Client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Cheddar.Client.ViewModels
 {
@@ -6,22 +7,27 @@ namespace Cheddar.Client.ViewModels
   {
     string timeOfDayAsText { get; }
 
-    void ConvertTimeOfDayToText();
+    string userName {get; }
   }
 
   public class HeaderViewModel : IHeaderViewModel
   {
     private readonly IClockService clock;
+    private readonly AuthenticationStateProvider authenticationStateProvider;
 
     public string timeOfDayAsText { get; private set; } = "";
+    public string userName { get; private set; } = "";
 
-    public HeaderViewModel(IClockService clock)
+    public HeaderViewModel(IClockService clock, AuthenticationStateProvider authenticationStateProvider)
     {
       this.clock = clock;
+      this.authenticationStateProvider = authenticationStateProvider;
+
       ConvertTimeOfDayToText();
+      GetUserName();
     }
 
-    public void ConvertTimeOfDayToText()
+    private void ConvertTimeOfDayToText()
     {
       int hour = clock.Now.Hour;
 
@@ -37,6 +43,12 @@ namespace Cheddar.Client.ViewModels
       {
         timeOfDayAsText = "Good evening";
       }
+    }
+
+    private async Task GetUserName()
+    {
+      var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+      userName = authState?.User.FindFirst(x => x.Type == "given_name")?.Value ?? string.Empty;
     }
   }
 }
