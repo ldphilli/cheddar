@@ -1,8 +1,5 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager Navigate
-@inject ApplicationState appState
+@inject IIndexViewModel viewModel
 
 <PageTitle>Index</PageTitle>
 <div class="fluid-container h-100">
@@ -22,13 +19,16 @@
         <div class="col-xl-6 my-xl-auto text-center">
             @* @if(imageSource is not null) {
                 <img src="@imageSource" />
-            } *@
+                } *@
             Rightside image placeholder
         </div>
     </div>
 </div>
 
- @code {
+@code {
 
-    
+    protected override async Task OnInitializedAsync() {
+        await viewModel.RedirectToAppIfLoggedIn();
+    }
+
 }
