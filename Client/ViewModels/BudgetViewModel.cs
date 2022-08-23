@@ -58,7 +58,7 @@ namespace Cheddar.Client.ViewModels {
 
         public Dictionary<string, double> CalculateExpenditureByCategories() {
 
-            var budget = 1000;
+            var budget = appState.monthlyBudgetModel.Outgoing;
             TotalCost = budgetLineItems.Sum(x => x.Cost);
             CostPerCategory = new Dictionary<string, double>(budgetLineItems
                 .GroupBy(x => x.Category.Name)

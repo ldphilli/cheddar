@@ -37,7 +37,7 @@ namespace Cheddar.Function {
             string month = req.Query["month"];
             string year = req.Query["year"];
             
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.MonthlyBudgetContainerNamer);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.MonthlyBudgetContainerName);
 
             log.LogInformation("C# HTTP trigger function processed a request on GetMonthlyIncome.");
             try {
@@ -45,10 +45,11 @@ namespace Cheddar.Function {
                 string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
                 if(userId != null || userId != string.Empty) {
                 //Setup query to database, get all budget line items for current user
-                    QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.userId = @userId and c.Month = @month and c.Year = @year")
-                    .WithParameter("@userId", userId)
-                    .WithParameter("@month", month)
-                    .WithParameter("@year", year);
+                log.LogInformation("Trying to find items");
+                    QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")  //and c.Month = @month and c.Year = @year"
+                    .WithParameter("@userId", userId);
+                    //.WithParameter("@month", month)
+                    //.WithParameter("@year", year);
                     using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                         queryDefinition,
                         null,
@@ -57,6 +58,7 @@ namespace Cheddar.Function {
 
                     //While the stream has more results (0 or more)
                     while (streamResultSet.HasMoreResults) {
+                        log.LogInformation("Items found");
                         using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync()) {
                             // Item stream operations do not throw exceptions for better performance
                             if (responseMessage.IsSuccessStatusCode) {
@@ -69,7 +71,7 @@ namespace Cheddar.Function {
                             }
                             //If no results are returned
                             else {
-                                Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
+                                log.LogError($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
                             }
                         }
                     }

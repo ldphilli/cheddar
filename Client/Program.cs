@@ -19,6 +19,7 @@ builder.Services
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebAPI"));
 builder.Services.AddTransient<IBudgetSettingsService, BudgetSettingsService>();
 builder.Services.AddTransient<IClockService, ClockService>();
+builder.Services.AddTransient<MonthlyBudgetService>();
 
 // View Model registrations
 builder.Services.AddTransient<IIndexViewModel, IndexViewModel>();
@@ -29,6 +30,7 @@ builder.Services.AddTransient<WelcomeViewModel>();
 builder.Services.AddTransient<BudgetViewModel>();
 builder.Services.AddTransient<IHeaderViewModel, HeaderViewModel>();
 builder.Services.AddSingleton<ApplicationState>();
+builder.Services.AddTransient<MonthlyBudgetViewModel>();
 
 builder.Services.AddMsalAuthentication(options =>
 {

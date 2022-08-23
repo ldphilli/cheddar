@@ -37,11 +37,13 @@ namespace Cheddar.Function
                 return new BadRequestObjectResult("No token found");
             }
 
+            string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+
             Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
 
             try
             {
-                List<RemainingExpenditureCategoriesModel> allRemainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategoryData(container);
+                List<RemainingExpenditureCategoriesModel> allRemainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategoryData(container, userId);
                 return new OkObjectResult(allRemainingExpenditureCategoriesForUser);
             }
             catch (CosmosException cosmosException)
@@ -69,11 +71,10 @@ namespace Cheddar.Function
             }
         }
 
-        public static async Task<List<RemainingExpenditureCategoriesModel>> GetRemainingExpenditureCategoryData(Container container)
+        public static async Task<List<RemainingExpenditureCategoriesModel>> GetRemainingExpenditureCategoryData(Container container, string userId)
         {
 
             List<RemainingExpenditureCategoriesModel> allRemainingExpenditureCategoriesForUser = new List<RemainingExpenditureCategoriesModel>();
-            string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
             if (userId != null || userId != string.Empty)
             {
                 //Setup query to database, get all budget line items for current user

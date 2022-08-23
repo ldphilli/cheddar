@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace Cheddar.Shared.Models {
     public class ApplicationState {
-        public BudgetSettingsModel budgetSettingsModel = new BudgetSettingsModel();//{ get; set; }
+        public BudgetSettingsModel budgetSettingsModel = new BudgetSettingsModel();
+        public MonthlyBudgetModel monthlyBudgetModel = new MonthlyBudgetModel();
     }
 }
