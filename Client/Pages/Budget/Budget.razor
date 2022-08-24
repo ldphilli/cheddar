@@ -24,9 +24,6 @@
             </div>
             <div class="row">
                 <div class="col-lg-6 col-xl-4">
-                    <div class="row">
-                    <RadzenButton class="col-xl-1 btn-primary" Click="()=>MonthlyBudgetViewModel.CreateMonthlyBudgetTest()" Text="Create monthly budget test" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
-                </div>
                     <RadzenCard class="m-3 crd-primary">
                         @* There's a null error on below line despite value coming back *@
                         <h3 class="font bold white-heading">£@MonthlyBudgetViewModel.monthlyBudgetModel.Income</h3>
@@ -100,10 +97,13 @@
     }
 
     protected override async Task OnInitializedAsync() {
-        //await MonthlyBudgetViewModel.GetLatestMonthlyBudgetForUser();
-        await budget.GetBudgetLineItems();
-        await SalaryUpdateViewModel.GetSalaryUpdateItems();
-        await budget.GetBudgetSettingsForUser();
+        
+        await Task.WhenAll(
+            MonthlyBudgetViewModel.GetLatestMonthlyBudgetForUser(),
+            budget.GetBudgetLineItems(),
+            SalaryUpdateViewModel.GetSalaryUpdateItems(),
+            budget.GetBudgetSettingsForUser()
+        );
     }
 
     public void AddNewBudgetItem() {

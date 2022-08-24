@@ -19,11 +19,6 @@ namespace Cheddar.Client.ViewModels {
             monthlyBudgetService = mbService;
         }
 
-        public async Task CreateMonthlyBudgetTest() {
-            MonthlyBudgetModel testerModer = new MonthlyBudgetModel();
-            await ApiClient.PostAsync("api/CreateMonthlyBudget", null);
-        }
-
         public async Task GetLatestMonthlyBudgetForUser() {
             
             DateTime today = DateTime.Now;

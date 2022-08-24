@@ -19,10 +19,9 @@ namespace Cheddar.Function
   public static class CreateMonthlyBudget {
 
     private static readonly JsonSerializer Serializer = new JsonSerializer();
-    private static jwtManagementToken manageToken = new jwtManagementToken();
 
     [FunctionName("CreateMonthlyBudget")]
-    public static async Task<IActionResult> Run([TimerTrigger("0 30 9 * * *")]TimerInfo myTimer, HttpRequest req, 
+    public static async Task Run([TimerTrigger("0 0 2 * * *")]TimerInfo myTimer, 
     [CosmosDB(
         databaseName: DbConfiguration.DBName,
         containerName: DbConfiguration.MonthlyBudgetContainerName,
@@ -39,13 +38,6 @@ namespace Cheddar.Function
         }
         
         log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
-        if (!req.Headers.TryGetValue("Authorization", out var token))
-        {
-            return new BadRequestObjectResult("No token found");
-        }
-
-        string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
 
         //Get list of users from budget settings where monthlybudgetdate = today
         Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
@@ -86,6 +78,7 @@ namespace Cheddar.Function
 
             
             foreach(var budgetSetting in allUsersWhoNeedNewBudgetToday) {
+                var userId = budgetSetting.userId;
                 // Call to get budget line items for user
                 budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer, userId);
                 
@@ -123,10 +116,11 @@ namespace Cheddar.Function
                     log.LogInformation("Budget line items empty");
                 }
             }
-            return new OkObjectResult("Success");        
+            return; //new OkObjectResult("Success");        
         }
         catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
-            return new BadRequestObjectResult("Bad");  
+        log.LogError(cosmosException.ToString());
+            return; // new BadRequestObjectResult("Bad");  
         }
     }
 
