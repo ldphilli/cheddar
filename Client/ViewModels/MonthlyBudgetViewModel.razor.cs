@@ -7,7 +7,7 @@ namespace Cheddar.Client.ViewModels {
 
         private readonly HttpClient ApiClient;
         private ApplicationState appState;
-        public MonthlyBudgetModel monthlyBudgetModel { get; set; }
+        public MonthlyBudgetModel monthlyBudgetModel => appState.monthlyBudgetModel;
         public MonthlyBudgetService monthlyBudgetService;
         private readonly NavigationManager nvm;
 
@@ -19,12 +19,26 @@ namespace Cheddar.Client.ViewModels {
             monthlyBudgetService = mbService;
         }
 
-         public async Task GetLatestMonthlyBudgetForUser() {
+        public async Task GetLatestMonthlyBudgetForUser() {
             
             DateTime today = DateTime.Now;
             int month = today.Month;
             int year = today.Year;
-            monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(month, year);
-         }
+            appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(month, year);
+            if(appState.monthlyBudgetModel == null)
+            {
+                appState.monthlyBudgetModel.Income = 0;
+                appState.monthlyBudgetModel.Outgoing = 0;
+                appState.monthlyBudgetModel.Remaining = 0;
+            }
+        }
+
+        public async Task GetAvailableYearsForUser() {
+
+        }
+
+        public async Task GetAvailableMonthsForSelectedYear() {
+
+        }
     }
 }

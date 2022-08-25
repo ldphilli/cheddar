@@ -19,13 +19,12 @@ namespace Cheddar.Function
   public static class CreateMonthlyBudget {
 
     private static readonly JsonSerializer Serializer = new JsonSerializer();
-    private static jwtManagementToken manageToken = new jwtManagementToken();
 
     [FunctionName("CreateMonthlyBudget")]
-    public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req, 
+    public static async Task Run([TimerTrigger("0 0 2 * * *")]TimerInfo myTimer, 
     [CosmosDB(
         databaseName: DbConfiguration.DBName,
-        containerName: DbConfiguration.MonthlyBudgetContainerNamer,
+        containerName: DbConfiguration.MonthlyBudgetContainerName,
         Connection = "CosmosDBConnection")] IAsyncCollector<MonthlyBudgetModel> documentsOut, 
         [CosmosDB(
         databaseName: DbConfiguration.DBName,
@@ -33,17 +32,12 @@ namespace Cheddar.Function
         Connection = "CosmosDBConnection")] CosmosClient client,
         ILogger log) {
 
-        /*if (myTimer.IsPastDue)
+        if (myTimer.IsPastDue)
         {
             log.LogInformation("Timer is running late!");
-        }*/
+        }
         
         log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
-        if (!req.Headers.TryGetValue("Authorization", out var token))
-        {
-            return new BadRequestObjectResult("No token found");
-        }
 
         //Get list of users from budget settings where monthlybudgetdate = today
         Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
@@ -84,18 +78,18 @@ namespace Cheddar.Function
 
             
             foreach(var budgetSetting in allUsersWhoNeedNewBudgetToday) {
+                var userId = budgetSetting.userId;
                 // Call to get budget line items for user
-                budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer);
+                budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer, userId);
                 
                 //Get remaining income - sum of budgetline items returned
                 if(budgetLineItemsForUser.Any()) {
                     log.LogInformation("Budget line items found");
-                    log.LogInformation(budgetLineItemsForUser.First().Cost.ToString());
                     totalCostOfExpenses = budgetLineItemsForUser.Sum(x => x.Cost);
-                    log.LogInformation(totalCostOfExpenses.ToString());
+
+                    // Create and establish values for monthly budget
                     MonthlyBudgetModel monthlyBudget = new MonthlyBudgetModel();
                     monthlyBudget.Id = Guid.NewGuid().ToString();
-                    string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
                     if(userId != null || userId != string.Empty) {
                         monthlyBudget.UserId = userId;
                     }
@@ -104,14 +98,15 @@ namespace Cheddar.Function
                     monthlyBudget.Outgoing = totalCostOfExpenses;
                     monthlyBudget.Year = DateTime.Now.Year;
                     monthlyBudget.Month = DateTime.Now.Month;
-                    remainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategories.GetRemainingExpenditureCategoryData(remainingExpenditureCategoriesContainer);
+                    monthlyBudget.expenditureCategories = new List<RemainingExpenditureCategoriesWithAmountModel>();
+                    remainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategories.GetRemainingExpenditureCategoryData(remainingExpenditureCategoriesContainer, userId);
                     foreach(var expenditureCategory in remainingExpenditureCategoriesForUser) {
                         RemainingExpenditureCategoriesWithAmountModel remExpenditureCategory = new RemainingExpenditureCategoriesWithAmountModel();
                         remExpenditureCategory.Id = Guid.NewGuid().ToString();
                         remExpenditureCategory.UserId = userId;
                         remExpenditureCategory.CategoryName = expenditureCategory.CategoryName;
-                        remExpenditureCategory.Amount = monthlyBudget.Remaining * (expenditureCategory.Percentage / 100);
-                        monthlyBudget.expenditureCategories.Add(remExpenditureCategory);
+                        remExpenditureCategory.Amount = monthlyBudget.Remaining * ((double)expenditureCategory.Percentage / (double)100);
+                            monthlyBudget.expenditureCategories.Add(remExpenditureCategory);
                     }
                     //Create monthly budget for user
                     await documentsOut.AddAsync(monthlyBudget);
@@ -121,10 +116,11 @@ namespace Cheddar.Function
                     log.LogInformation("Budget line items empty");
                 }
             }
-            return new OkObjectResult("Success");        
+            return; //new OkObjectResult("Success");        
         }
         catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
-            return new BadRequestObjectResult("Bad");  
+        log.LogError(cosmosException.ToString());
+            return; // new BadRequestObjectResult("Bad");  
         }
     }
 

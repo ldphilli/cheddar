@@ -4,8 +4,9 @@
 @inject BudgetViewModel budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject IBudgetSettingsService BudgetSettingsService
-@inject ApplicationState ApplicationState
-@attribute [Authorize]
+@* @inject ApplicationState ApplicationState *@
+@inject MonthlyBudgetViewModel MonthlyBudgetViewModel
+@* @attribute [Authorize] *@
 
 <PageTitle>Budget</PageTitle>
 
@@ -15,22 +16,29 @@
             <Header></Header>
             <h2 class="font bold white-heading">Summary</h2>
             <div class="row">
+                @* <div class="col-lg-12 col-xl-12">
+                     <RadzenDropDown AllowClear="true" TValue="string" Class="w-100" 
+                        Data=@(customers.Select(c => c.CompanyName).Distinct())
+                        Change=@(args => OnChange(args, "DropDown")) />
+                </div> *@
+            </div>
+            <div class="row">
                 <div class="col-lg-6 col-xl-4">
                     <RadzenCard class="m-3 crd-primary">
                         @* There's a null error on below line despite value coming back *@
-                        <h3 class="font bold white-heading">£@ApplicationState.budgetSettingsModel.MonthlyIncome</h3>
+                        <h3 class="font bold white-heading">£@MonthlyBudgetViewModel.monthlyBudgetModel.Income</h3>
                         <p class="font white-heading">This months income</p>
                     </RadzenCard>
                 </div>
                 <div class="col-lg-6 col-xl-4">
                     <RadzenCard class="m-3 crd-primary ">
-                        <h3 class="font bold white-heading">£@budget.TotalCost</h3>
+                        <h3 class="font bold white-heading">£@MonthlyBudgetViewModel.monthlyBudgetModel.Outgoing</h3>
                         <p class="font white-heading">This months budget spend</p>
                     </RadzenCard>
                 </div>
                 <div class="col-lg-6 col-xl-4">
                     <RadzenCard class="m-3 crd-primary ">
-                        <h3 class="font bold white-heading">£1000.00</h3>
+                        <h3 class="font bold white-heading">£@MonthlyBudgetViewModel.monthlyBudgetModel.Remaining</h3>
                         <p class="font white-heading">Remaining this month</p>
                     </RadzenCard>
                 </div>
@@ -89,9 +97,13 @@
     }
 
     protected override async Task OnInitializedAsync() {
-        await budget.GetBudgetLineItems();
-        await SalaryUpdateViewModel.GetSalaryUpdateItems();
-        await budget.GetBudgetSettingsForUser();
+        
+        await Task.WhenAll(
+            MonthlyBudgetViewModel.GetLatestMonthlyBudgetForUser(),
+            budget.GetBudgetLineItems(),
+            SalaryUpdateViewModel.GetSalaryUpdateItems(),
+            budget.GetBudgetSettingsForUser()
+        );
     }
 
     public void AddNewBudgetItem() {

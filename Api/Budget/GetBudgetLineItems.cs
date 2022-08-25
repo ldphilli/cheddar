@@ -54,7 +54,7 @@ namespace Cheddar.Function
                         queryDefinition,
                         null,
                         new QueryRequestOptions()
-                    )) ;
+                    ));
                 }
 
                 //While the stream has more results (0 or more)
@@ -117,14 +117,14 @@ namespace Cheddar.Function
             }
         }
 
-        public static async Task<List<BudgetLineItemModel>> GetBudgetLineItemData(Container container)
+        public static async Task<List<BudgetLineItemModel>> GetBudgetLineItemData(Container container, string userId)
         {
 
             List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
 
             //Setup query to database, get all budget line items for current user
             QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-            .WithParameter("@userId", 2);
+            .WithParameter("@userId", userId);
             using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
                 queryDefinition,
                 null,
