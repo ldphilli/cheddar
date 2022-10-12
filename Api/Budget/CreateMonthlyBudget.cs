@@ -16,126 +16,113 @@ using Cheddar.Api.Configuration;
 
 namespace Cheddar.Function
 {
-  public static class CreateMonthlyBudget {
-
+  public static class CreateMonthlyBudget
+  {
     private static readonly JsonSerializer Serializer = new JsonSerializer();
 
     [FunctionName("CreateMonthlyBudget")]
-    public static async Task Run([TimerTrigger("0 0 2 * * *")]TimerInfo myTimer, 
-    [CosmosDB(
+    public static async Task Run(
+      [TimerTrigger("0 0 2 * * *") /* Every day at 2AM */] TimerInfo myTimer,
+      [CosmosDB(
         databaseName: DbConfiguration.DBName,
         containerName: DbConfiguration.MonthlyBudgetContainerName,
-        Connection = "CosmosDBConnection")] IAsyncCollector<MonthlyBudgetModel> documentsOut, 
-        [CosmosDB(
+        Connection = "CosmosDBConnection")] IAsyncCollector<MonthlyBudgetModel> documentsOut,
+      [CosmosDB(
         databaseName: DbConfiguration.DBName,
         containerName: DbConfiguration.BudgetSettingsContainerName,
         Connection = "CosmosDBConnection")] CosmosClient client,
-        ILogger log) {
+      ILogger log)
+    {
 
-        if (myTimer.IsPastDue)
+      if (myTimer.IsPastDue)
+      {
+        log.LogInformation("Timer is running late!");
+      }
+
+      log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+
+      //Get list of users from budget settings where monthlybudgetdate = today
+      Container budgetSettingsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
+      Container budgetLineItemsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
+      Container remainingExpenditureCategoriesContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
+
+      try
+      {
+        var allUsersWhoNeedNewBudgetToday = budgetSettingsContainer
+            .GetItemLinqQueryable<BudgetSettingsModel>(true)
+            .Where(x => x.MonthlyBudgetDay == DateTimeOffset.Now.Day)
+            .AsEnumerable();
+
+        foreach (var budgetSetting in allUsersWhoNeedNewBudgetToday)
         {
-            log.LogInformation("Timer is running late!");
+          await CreateMonthlyBudgetForUser(
+            budgetSetting,
+            budgetLineItemsContainer,
+            remainingExpenditureCategoriesContainer,
+            documentsOut,
+            log);
         }
-        
-        log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
-        //Get list of users from budget settings where monthlybudgetdate = today
-        Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetSettingsContainerName);
-        Container budgetLineItemsContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
-        Container remainingExpenditureCategoriesContainer = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
-
-        try {
-            List<BudgetSettingsModel> allUsersWhoNeedNewBudgetToday = new List<BudgetSettingsModel>();
-            List<BudgetLineItemModel> budgetLineItemsForUser = new List<BudgetLineItemModel>();
-            List<RemainingExpenditureCategoriesModel> remainingExpenditureCategoriesForUser = new List<RemainingExpenditureCategoriesModel>();
-            List<RemainingExpenditureCategoriesWithAmountModel> expenditureCategoriesWithAmountForUser = new List<RemainingExpenditureCategoriesWithAmountModel>();
-            double totalCostOfExpenses;
-            //Setup query to database, get all budget line items for current user
-            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.MonthlyBudgetDay = DateTimePart('d', GetCurrentDateTime())");
-            using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
-                queryDefinition,
-                null,
-                new QueryRequestOptions()
-            ))
-
-            //While the stream has more results (0 or more)
-            while (streamResultSet.HasMoreResults) {
-                using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync()) {
-                    // Item stream operations do not throw exceptions for better performance
-                    if (responseMessage.IsSuccessStatusCode) {
-                        //Parse return to list of Budget Line Item Model
-                        dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                        List<BudgetSettingsModel> usersWhoNeedNewBudgetToday = streamResponse.Documents.ToObject<List<BudgetSettingsModel>>();
-                        allUsersWhoNeedNewBudgetToday.AddRange(usersWhoNeedNewBudgetToday);
-                        log.LogInformation(usersWhoNeedNewBudgetToday.First().Id);
-                    }
-                        //If no results are returned
-                    else {
-                        Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                    }
-                }
-            }
-
-            
-            foreach(var budgetSetting in allUsersWhoNeedNewBudgetToday) {
-                var userId = budgetSetting.userId;
-                // Call to get budget line items for user
-                budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer, userId);
-                
-                //Get remaining income - sum of budgetline items returned
-                if(budgetLineItemsForUser.Any()) {
-                    log.LogInformation("Budget line items found");
-                    totalCostOfExpenses = budgetLineItemsForUser.Sum(x => x.Cost);
-
-                    // Create and establish values for monthly budget
-                    MonthlyBudgetModel monthlyBudget = new MonthlyBudgetModel();
-                    monthlyBudget.Id = Guid.NewGuid().ToString();
-                    if(userId != null || userId != string.Empty) {
-                        monthlyBudget.UserId = userId;
-                    }
-                    monthlyBudget.Remaining = budgetSetting.MonthlyIncome - totalCostOfExpenses;
-                    monthlyBudget.Income = budgetSetting.MonthlyIncome;
-                    monthlyBudget.Outgoing = totalCostOfExpenses;
-                    monthlyBudget.Year = DateTime.Now.Year;
-                    monthlyBudget.Month = DateTime.Now.Month;
-                    monthlyBudget.expenditureCategories = new List<RemainingExpenditureCategoriesWithAmountModel>();
-                    remainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategories.GetRemainingExpenditureCategoryData(remainingExpenditureCategoriesContainer, userId);
-                    foreach(var expenditureCategory in remainingExpenditureCategoriesForUser) {
-                        RemainingExpenditureCategoriesWithAmountModel remExpenditureCategory = new RemainingExpenditureCategoriesWithAmountModel();
-                        remExpenditureCategory.Id = Guid.NewGuid().ToString();
-                        remExpenditureCategory.UserId = userId;
-                        remExpenditureCategory.CategoryName = expenditureCategory.CategoryName;
-                        remExpenditureCategory.Amount = monthlyBudget.Remaining * ((double)expenditureCategory.Percentage / (double)100);
-                            monthlyBudget.expenditureCategories.Add(remExpenditureCategory);
-                    }
-                    //Create monthly budget for user
-                    await documentsOut.AddAsync(monthlyBudget);
-                    log.LogInformation("Monthly budget for user created");
-                }
-                else {
-                    log.LogInformation("Budget line items empty");
-                }
-            }
-            return; //new OkObjectResult("Success");        
-        }
-        catch(CosmosException cosmosException) { //when (ex.Status == (int)HttpStatusCode.NotFound)
+      }
+      catch (CosmosException cosmosException)
+      {
         log.LogError(cosmosException.ToString());
-            return; // new BadRequestObjectResult("Bad");  
-        }
+      }
     }
 
-    private static T FromStream<T>(Stream stream) {
-            using (stream) {
-                if (typeof(Stream).IsAssignableFrom(typeof(T))) {
-                    return (T)(object)stream;
-                }
+    private static async Task CreateMonthlyBudgetForUser(
+      BudgetSettingsModel budgetSetting,
+      Container budgetLineItemsContainer,
+      Container remainingExpenditureCategoriesContainer,
+      IAsyncCollector<MonthlyBudgetModel> documentsOut,
+      ILogger log)
+    {
+      var userId = budgetSetting.userId;
+     
+      log.LogInformation($"Creating monthly budget for user '{userId}' using settings '{budgetSetting.Id}");
 
-                using (StreamReader sr = new StreamReader(stream)) {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr)) {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
-            }
-        }
+      if (userId == null || userId == string.Empty)
+      {
+        log.LogInformation($"User id for budget settings '{budgetSetting.Id}' was null/empty");
+        return;
+      }
+
+      var budgetLineItemsForUser = await GetBudgetLineItems.GetBudgetLineItemData(budgetLineItemsContainer, userId);
+      var remainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategories.GetRemainingExpenditureCategoryData(remainingExpenditureCategoriesContainer, userId);
+
+      if (!budgetLineItemsForUser.Any())
+      {
+        log.LogInformation("Budget line items empty");
+        return;
+      }
+
+      log.LogInformation("Budget line items found");
+      var totalCostOfExpenses = budgetLineItemsForUser.Sum(x => x.Cost);
+      var remainingBudget = budgetSetting.MonthlyIncome - totalCostOfExpenses;
+
+      // Create and establish values for monthly budget
+      MonthlyBudgetModel monthlyBudget = new MonthlyBudgetModel
+      {
+        Id = Guid.NewGuid().ToString(),
+        UserId = userId,
+        Remaining = remainingBudget,
+        Income = budgetSetting.MonthlyIncome,
+        Outgoing = totalCostOfExpenses,
+        Year = DateTime.Now.Year,
+        Month = DateTime.Now.Month,
+        expenditureCategories = remainingExpenditureCategoriesForUser
+          .Select(x => new RemainingExpenditureCategoriesWithAmountModel
+          {
+            Id = Guid.NewGuid().ToString(),
+            UserId = userId,
+            CategoryName = x.CategoryName,
+            Amount = remainingBudget * ((double)x.Percentage / (double)100)
+          })
+          .ToList(),
+      };
+
+      //Create monthly budget for user
+      await documentsOut.AddAsync(monthlyBudget);
+      log.LogInformation("Monthly budget for user created");
     }
+  }
 }
