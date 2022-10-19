@@ -32,70 +32,42 @@ namespace Cheddar.Function
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log)
         {
+            try {
 
-            if (!req.Headers.TryGetValue("Authorization", out var token))
-            {
-                return new BadRequestObjectResult("No token found");
-            }
+                if (!req.Headers.TryGetValue("Authorization", out var token))
+                {
+                    return new BadRequestObjectResult("No token found");
+                }
 
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
+                Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
 
-            try
-            {
+                log.LogInformation("C# HTTP trigger function processed a request on GetBudgetLineItems.");
 
-                List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
                 string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
-                if (userId != null || userId != string.Empty)
+                if(string.IsNullOrWhiteSpace(userId))
                 {
-                    //Setup query to database, get all budget line items for current user
-                    QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-                    .WithParameter("@userId", userId);
-                    using (streamResultSet = container.GetItemQueryStreamIterator(
-                        queryDefinition,
-                        null,
-                        new QueryRequestOptions()
-                    ));
+                    throw new Exception("User Id is blank.");
                 }
 
-                //While the stream has more results (0 or more)
-                while (streamResultSet.HasMoreResults)
-                {
-                    using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync())
-                    {
-                        // Item stream operations do not throw exceptions for better performance
-                        if (responseMessage.IsSuccessStatusCode)
-                        {
-                            //Parse return to list of Budget Line Item Model
-                            dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<BudgetLineItemModel> budgetLineItems = streamResponse.Documents.ToObject<List<BudgetLineItemModel>>();
-                            if (budgetLineItems != null)
-                            {
-                                allBudgetLineItemsForUser.AddRange(budgetLineItems);
-                            }
-                        }
-                        //If no results are returned
-                        else
-                        {
-                            Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                        }
-                    }
-                }
-                if (allBudgetLineItemsForUser != null)
-                {
-                    log.LogInformation(allBudgetLineItemsForUser.FirstOrDefault()?.Id);
-                    return new OkObjectResult(allBudgetLineItemsForUser);
-                }
-                else
+                //Setup query to database, get budget setting for current user
+                log.LogInformation("Trying to find items");
+
+                var budgetLineItems = container
+                .GetItemLinqQueryable<BudgetLineItemModel>(true)
+                .Where(x => x.UserId == userId)
+                .AsEnumerable();
+
+                if(budgetLineItems == null)
                 {
                     return new BadRequestObjectResult("Failed to find records.");
                 }
-                // List<BudgetLineItemModel> allBudgetLineItemsForUser = await GetBudgetLineItemData(container);
-                // return new OkObjectResult(allBudgetLineItemsForUser);
+
+                return new OkObjectResult(budgetLineItems);
             }
             catch (CosmosException cosmosException)
             { //when (ex.Status == (int)HttpStatusCode.NotFound)
                 return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");
-            }
+            }          
         }
 
         private static T FromStream<T>(Stream stream)
@@ -119,39 +91,22 @@ namespace Cheddar.Function
 
         public static async Task<List<BudgetLineItemModel>> GetBudgetLineItemData(Container container, string userId)
         {
+            if(string.IsNullOrWhiteSpace(userId))
+            {
+                throw new Exception("User Id is blank.");
+            }
 
-            List<BudgetLineItemModel> allBudgetLineItemsForUser = new List<BudgetLineItemModel>();
+            var budgetLineItems = container
+                .GetItemLinqQueryable<BudgetLineItemModel>(true)
+                .Where(x => x.UserId == userId)
+                .AsEnumerable();
 
-            //Setup query to database, get all budget line items for current user
-            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-            .WithParameter("@userId", userId);
-            using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
-                queryDefinition,
-                null,
-                new QueryRequestOptions()
-            ))
-
-                //While the stream has more results (0 or more)
-                while (streamResultSet.HasMoreResults)
+                if(budgetLineItems == null)
                 {
-                    using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync())
-                    {
-                        // Item stream operations do not throw exceptions for better performance
-                        if (responseMessage.IsSuccessStatusCode)
-                        {
-                            //Parse return to list of Budget Line Item Model
-                            dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                            List<BudgetLineItemModel> budgetLineItems = streamResponse.Documents.ToObject<List<BudgetLineItemModel>>();
-                            allBudgetLineItemsForUser.AddRange(budgetLineItems);
-                        }
-                        //If no results are returned
-                        else
-                        {
-                            Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                        }
-                    }
+                    return null;
                 }
-            return allBudgetLineItemsForUser;
+
+                return budgetLineItems;
         }
     }
 }
