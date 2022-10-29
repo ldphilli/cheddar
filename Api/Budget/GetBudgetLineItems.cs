@@ -52,10 +52,7 @@ namespace Cheddar.Function
                 //Setup query to database, get budget setting for current user
                 log.LogInformation("Trying to find items");
 
-                var budgetLineItems = container
-                .GetItemLinqQueryable<BudgetLineItemModel>(true)
-                .Where(x => x.UserId == userId)
-                .AsEnumerable();
+                var budgetLineItems = GetBudgetLineItemData(container, userId);
 
                 if(budgetLineItems == null)
                 {
@@ -70,32 +67,8 @@ namespace Cheddar.Function
             }          
         }
 
-        private static T FromStream<T>(Stream stream)
+        public static async Task<IEnumerable<BudgetLineItemModel>> GetBudgetLineItemData(Container container, string userId)
         {
-            using (stream)
-            {
-                if (typeof(Stream).IsAssignableFrom(typeof(T)))
-                {
-                    return (T)(object)stream;
-                }
-
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                    {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
-            }
-        }
-
-        public static async Task<List<BudgetLineItemModel>> GetBudgetLineItemData(Container container, string userId)
-        {
-            if(string.IsNullOrWhiteSpace(userId))
-            {
-                throw new Exception("User Id is blank.");
-            }
-
             var budgetLineItems = container
                 .GetItemLinqQueryable<BudgetLineItemModel>(true)
                 .Where(x => x.UserId == userId)
