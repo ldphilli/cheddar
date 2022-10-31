@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
@@ -30,75 +31,41 @@ namespace Cheddar.Function
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log)
         {
+            try {
 
-            if (!req.Headers.TryGetValue("Authorization", out var token))
-            {
-                return new BadRequestObjectResult("No token found");
-            }
-
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetCategoriesContainerName);
-
-            try
-            {
-                List<BudgetCategoriesModel> allBudgetCategoriesForUser = new List<BudgetCategoriesModel>();
-                string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
-                if (userId != null || userId != string.Empty)
+                if (!req.Headers.TryGetValue("Authorization", out var token))
                 {
-                    //Setup query to database, get all budget line items for current user
-                    QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-                    .WithParameter("@userId", userId);
-                    using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
-                        queryDefinition,
-                        null,
-                        new QueryRequestOptions()
-                    ))
-
-                        //While the stream has more results (0 or more)
-                        while (streamResultSet.HasMoreResults)
-                        {
-                            using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync())
-                            {
-                                // Item stream operations do not throw exceptions for better performance
-                                if (responseMessage.IsSuccessStatusCode)
-                                {
-                                    //Parse return to list of Budget Line Item Model
-                                    dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                                    List<BudgetCategoriesModel> budgetCategories = streamResponse.Documents.ToObject<List<BudgetCategoriesModel>>();
-                                    allBudgetCategoriesForUser.AddRange(budgetCategories);
-                                }
-                                //If no results are returned
-                                else
-                                {
-                                    Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                                }
-                            }
-                        }
+                    return new BadRequestObjectResult("No token found");
                 }
 
-                return new OkObjectResult(allBudgetCategoriesForUser);
+                Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetCategoriesContainerName);
+
+                log.LogInformation("C# HTTP trigger function processed a request on GetBudgetCategories.");
+
+                string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+                if(string.IsNullOrWhiteSpace(userId))
+                {
+                    throw new Exception("User Id is blank.");
+                }
+
+                //Setup query to database, get budget categories for current user
+                log.LogInformation("Trying to find items");
+
+                var budgetCategories = container
+                .GetItemLinqQueryable<BudgetCategoriesModel>(true)
+                .Where(x => x.UserId == userId)
+                .AsEnumerable();
+
+                if(budgetCategories == null)
+                {
+                    return new BadRequestObjectResult("Failed to find records.");
+                }
+
+                return new OkObjectResult(budgetCategories);
             }
             catch (CosmosException cosmosException)
             { //when (ex.Status == (int)HttpStatusCode.NotFound)
                 return new BadRequestObjectResult($"Failed to read items. Cosmos Status Code {cosmosException.StatusCode}, Sub Status Code {cosmosException.SubStatusCode}: {cosmosException.Message}.");
-            }
-        }
-
-        private static T FromStream<T>(Stream stream)
-        {
-            using (stream)
-            {
-                if (typeof(Stream).IsAssignableFrom(typeof(T)))
-                {
-                    return (T)(object)stream;
-                }
-
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                    {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
             }
         }
     }

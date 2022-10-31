@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Cheddar.Api.Configuration;
 
@@ -31,19 +32,28 @@ namespace Cheddar.Function
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log)
         {
+            try {
 
-            if (!req.Headers.TryGetValue("Authorization", out var token))
-            {
-                return new BadRequestObjectResult("No token found");
-            }
+                if (!req.Headers.TryGetValue("Authorization", out var token))
+                {
+                    return new BadRequestObjectResult("No token found");
+                }
 
-            string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+                Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
 
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.RemainingExpenditureCategoriesContainerName);
+                log.LogInformation("C# HTTP trigger function processed a request on GetBudgetLineItems.");
 
-            try
-            {
-                List<RemainingExpenditureCategoriesModel> allRemainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategoryData(container, userId);
+                string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
+
+                if(string.IsNullOrWhiteSpace(userId))
+                {
+                    throw new Exception("User Id is blank.");
+                }
+
+                //Setup query to database, get budget setting for current user
+                log.LogInformation("Trying to find items");
+
+                var allRemainingExpenditureCategoriesForUser = await GetRemainingExpenditureCategoryData(container, userId);
                 return new OkObjectResult(allRemainingExpenditureCategoriesForUser);
             }
             catch (CosmosException cosmosException)
@@ -52,60 +62,16 @@ namespace Cheddar.Function
             }
         }
 
-        private static T FromStream<T>(Stream stream)
+        public static async Task<IEnumerable<RemainingExpenditureCategoriesModel>> GetRemainingExpenditureCategoryData(Container container, string userId)
         {
-            using (stream)
+            var allRemainingExpenditureCategoriesForUser = container
+                .GetItemLinqQueryable<RemainingExpenditureCategoriesModel>(true)
+                .Where(x => x.UserId == userId)
+                .AsEnumerable();
+
+            if(allRemainingExpenditureCategoriesForUser == null)
             {
-                if (typeof(Stream).IsAssignableFrom(typeof(T)))
-                {
-                    return (T)(object)stream;
-                }
-
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                    {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
-            }
-        }
-
-        public static async Task<List<RemainingExpenditureCategoriesModel>> GetRemainingExpenditureCategoryData(Container container, string userId)
-        {
-
-            List<RemainingExpenditureCategoriesModel> allRemainingExpenditureCategoriesForUser = new List<RemainingExpenditureCategoriesModel>();
-            if (userId != null || userId != string.Empty)
-            {
-                //Setup query to database, get all budget line items for current user
-                QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c where c.UserId = @userId")
-                .WithParameter("@userId", userId);
-                using (FeedIterator streamResultSet = container.GetItemQueryStreamIterator(
-                    queryDefinition,
-                    null,
-                    new QueryRequestOptions()
-                ))
-
-                    //While the stream has more results (0 or more)
-                    while (streamResultSet.HasMoreResults)
-                    {
-                        using (ResponseMessage responseMessage = await streamResultSet.ReadNextAsync())
-                        {
-                            // Item stream operations do not throw exceptions for better performance
-                            if (responseMessage.IsSuccessStatusCode)
-                            {
-                                //Parse return to list of Budget Line Item Model
-                                dynamic streamResponse = FromStream<dynamic>(responseMessage.Content);
-                                List<RemainingExpenditureCategoriesModel> remainingExpenditureCategories = streamResponse.Documents.ToObject<List<RemainingExpenditureCategoriesModel>>();
-                                allRemainingExpenditureCategoriesForUser.AddRange(remainingExpenditureCategories);
-                            }
-                            //If no results are returned
-                            else
-                            {
-                                Console.WriteLine($"Read all items from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
-                            }
-                        }
-                    }
+                return null;
             }
 
             return allRemainingExpenditureCategoriesForUser;

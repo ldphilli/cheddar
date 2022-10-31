@@ -37,9 +37,9 @@ namespace Cheddar.Function
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var item = JsonConvert.DeserializeObject<PaymentMethodsModel>(requestBody);
             string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
-            if (userId != null || userId != string.Empty)
+            if(string.IsNullOrWhiteSpace(userId))
             {
-                item.UserId = userId;
+                throw new Exception("User Id is blank.");
             }
             log.LogInformation("C# HTTP trigger function processed a request.");
 

@@ -40,7 +40,7 @@ namespace Cheddar.Function {
                 
                 Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.MonthlyBudgetContainerName);
 
-                log.LogInformation("C# HTTP trigger function processed a request on GetMonthlyIncome.");
+                log.LogInformation("C# HTTP trigger function processed a request on GetMonthlyBudget.");
 
                 string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
                 if(string.IsNullOrWhiteSpace(userId))
