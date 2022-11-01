@@ -18,5 +18,11 @@ namespace Cheddar.Client.Services {
             string request = String.Concat("api/GetMonthlyBudget?month=", month.ToString(),"&year=", year.ToString());
             return await ApiClient.GetFromJsonAsync<MonthlyBudgetModel>(request);
         }
+
+        public async Task<MonthlyBudgetModel> GetLatestMonthlyBudget() {
+            Console.WriteLine("Entered into monthly budget service GetLatestMonthlyBudget");
+            string request = String.Concat("api/GetLatestMonthlyBudget");
+            return await ApiClient.GetFromJsonAsync<MonthlyBudgetModel>(request);
+        }
     }
 }
