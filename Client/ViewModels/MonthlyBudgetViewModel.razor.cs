@@ -21,7 +21,8 @@ namespace Cheddar.Client.ViewModels {
 
         public async Task GetLatestMonthlyBudgetForUser() {
             
-            DateTime today = DateTime.Now;
+            appState.monthlyBudgetModel = await monthlyBudgetService.GetLatestMonthlyBudget();
+            /*DateTime today = DateTime.Now;
             int month = today.Month;
             int year = today.Year;
             appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(month, year);
@@ -30,7 +31,7 @@ namespace Cheddar.Client.ViewModels {
                 appState.monthlyBudgetModel.Income = 0;
                 appState.monthlyBudgetModel.Outgoing = 0;
                 appState.monthlyBudgetModel.Remaining = 0;
-            }
+            }*/
         }
 
         public async Task GetAvailableYearsForUser() {
