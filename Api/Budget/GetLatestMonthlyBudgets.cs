@@ -48,8 +48,8 @@ namespace Cheddar.Function {
                 var monthBudget = container
                     .GetItemLinqQueryable<MonthlyBudgetModel>(true)
                     .Where(x => x.UserId == userId)
-                    .OrderBy(x => x.Year)
-                    .ThenBy(x => x.Month)
+                    .OrderByDescending(x => x.Year)
+                    .ThenByDescending(x => x.Month)
                     .AsEnumerable()
                     .FirstOrDefault();
 
