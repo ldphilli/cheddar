@@ -52,7 +52,7 @@ namespace Cheddar.Function
                 //Setup query to database, get budget setting for current user
                 log.LogInformation("Trying to find items");
 
-                var budgetLineItems = GetBudgetLineItemData(container, userId);
+                var budgetLineItems = await GetBudgetLineItemData(container, userId);
 
                 if(budgetLineItems == null)
                 {
