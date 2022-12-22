@@ -15,6 +15,7 @@ namespace Cheddar.Client.ViewModels {
         public List<MonthModel> monthsForYear = new List<MonthModel>();
         public int selectedYear;
         public MonthModel selectedMonth;
+        public List<MonthlyBudgetModel> allMonthlyBudgetsForUser;
 
         public MonthlyBudgetViewModel(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, MonthlyBudgetService mbService)
         {
@@ -24,9 +25,22 @@ namespace Cheddar.Client.ViewModels {
             monthlyBudgetService = mbService;
         }
 
-        public async Task GetLatestMonthlyBudgetForUser() {
+        public async Task SetupLatestMonthlyBudgetForUser() {
             
-            appState.monthlyBudgetModel = await monthlyBudgetService.GetLatestMonthlyBudget();
+           await GetAllMonthlyBudgetsForUser();
+
+           GetAvailableYearsForUser();
+           selectedYear = years.LastOrDefault();
+
+           GetMonthsForSelectedYear();
+           selectedMonth = monthsForYear.LastOrDefault();
+
+           appState.monthlyBudgetModel = allMonthlyBudgetsForUser.OrderByDescending(x => x.Year)
+                    .ThenByDescending(x => x.Month)
+                    .FirstOrDefault();
+           
+
+            //appState.monthlyBudgetModel = await monthlyBudgetService.GetLatestMonthlyBudget();
             /*DateTime today = DateTime.Now;
             int month = today.Month;
             int year = today.Year;
@@ -37,24 +51,60 @@ namespace Cheddar.Client.ViewModels {
                 appState.monthlyBudgetModel.Outgoing = 0;
                 appState.monthlyBudgetModel.Remaining = 0;
             }*/
+
+            //selectedYear = monthlyBudgetModel.Year;
+            //selectedMonth = monthsForYear.Where(x => x.MonthNumber == monthlyBudgetModel.Month).;
         }
 
-        public async Task GetAvailableYearsForUser() {
+        public async Task ReloadBudgetForSelectedYear() {
 
-            List<MonthlyBudgetModel> allMonthlyBudgetsForUser = await monthlyBudgetService.GetAllMonthlyBudgetDatesForUser();
+           GetMonthsForSelectedYear();
+           selectedMonth = monthsForYear.FirstOrDefault();
+           appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(selectedMonth.MonthNumber, selectedYear);
+
+            //appState.monthlyBudgetModel = await monthlyBudgetService.GetLatestMonthlyBudget();
+            /*DateTime today = DateTime.Now;
+            int month = today.Month;
+            int year = today.Year;
+            appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(month, year);
+            if(appState.monthlyBudgetModel == null)
+            {
+                appState.monthlyBudgetModel.Income = 0;
+                appState.monthlyBudgetModel.Outgoing = 0;
+                appState.monthlyBudgetModel.Remaining = 0;
+            }*/
+
+            //selectedYear = monthlyBudgetModel.Year;
+            //selectedMonth = monthsForYear.Where(x => x.MonthNumber == monthlyBudgetModel.Month).;
+        }
+
+        public async Task GetAllMonthlyBudgetsForUser() {
+
+            allMonthlyBudgetsForUser = await monthlyBudgetService.GetAllMonthlyBudgetDatesForUser();
+            
+        }
+        public void GetAvailableYearsForUser() {
+            
             years = allMonthlyBudgetsForUser.OrderBy(x => x.Year)
             .Select(x => x.Year)
             .Distinct()
             .ToList();
-            
-            selectedYear = years.LastOrDefault();
+        }
 
-            var months = allMonthlyBudgetsForUser.Where(x => x.Year == years.FirstOrDefault())
+        public async Task GetSpecificMonthlyBudget() {
+
+            appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(selectedMonth.MonthNumber, selectedYear);
+        }
+
+        public void GetMonthsForSelectedYear() {
+
+            var months = allMonthlyBudgetsForUser.Where(x => x.Year == selectedYear)
             .OrderBy(x => x.Month)
             .Select(x => x.Month)
             .Distinct()
             .ToList();
 
+            monthsForYear.Clear();
             months.ForEach(delegate(int month) {
                 monthsForYear.Add(
                     new MonthModel {
@@ -64,14 +114,6 @@ namespace Cheddar.Client.ViewModels {
                     //monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)
                 );           
             });
-            
-            selectedMonth = monthsForYear.LastOrDefault();
-
-        }
-
-        public async Task GetSpecificMonthlyBudget() {
-
-            appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(selectedMonth.MonthNumber, selectedYear);
         }
     }
 }

@@ -20,7 +20,7 @@
                     <RadzenCard>
                         <h4 class="mb-4">Years</h4>
                         <RadzenDropDown AllowClear="true" Class="w-100" 
-                                        Data=@MonthlyBudgetViewModel.years TValue="int" @bind-Value="@MonthlyBudgetViewModel.selectedYear"/>
+                                        Data=@MonthlyBudgetViewModel.years TValue="int" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedYear" @bind-Value="@MonthlyBudgetViewModel.selectedYear"/>
                     </RadzenCard>
                 </div>
                 <div class="col-md-6 col-lg-4 col-xl-3 p-3">
@@ -108,8 +108,7 @@
     protected override async Task OnInitializedAsync() {
         
         await Task.WhenAll(
-            MonthlyBudgetViewModel.GetLatestMonthlyBudgetForUser(),
-            MonthlyBudgetViewModel.GetAvailableYearsForUser(),
+            MonthlyBudgetViewModel.SetupLatestMonthlyBudgetForUser(),
             budget.GetBudgetLineItems(),
             SalaryUpdateViewModel.GetSalaryUpdateItems(),
             budget.GetBudgetSettingsForUser()
