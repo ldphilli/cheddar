@@ -1,6 +1,7 @@
 using Cheddar.Shared.Models;
 using Cheddar.Client.Services;
 using Microsoft.AspNetCore.Components;
+using System.Globalization;
 
 namespace Cheddar.Client.ViewModels {
     public class MonthlyBudgetViewModel {
@@ -10,6 +11,11 @@ namespace Cheddar.Client.ViewModels {
         public MonthlyBudgetModel monthlyBudgetModel => appState.monthlyBudgetModel;
         public MonthlyBudgetService monthlyBudgetService;
         private readonly NavigationManager nvm;
+        public List<int> years = new List<int>();
+        public List<MonthModel> months = new List<MonthModel>();
+        public int selectedYear;
+        public MonthModel selectedMonth;
+        public List<MonthlyBudgetModel> allMonthlyBudgetsForUser;
 
         public MonthlyBudgetViewModel(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, MonthlyBudgetService mbService)
         {
@@ -19,27 +25,70 @@ namespace Cheddar.Client.ViewModels {
             monthlyBudgetService = mbService;
         }
 
-        public async Task GetLatestMonthlyBudgetForUser() {
+        public async Task SetupLatestMonthlyBudgetForUser() {
             
-            appState.monthlyBudgetModel = await monthlyBudgetService.GetLatestMonthlyBudget();
-            /*DateTime today = DateTime.Now;
-            int month = today.Month;
-            int year = today.Year;
-            appState.monthlyBudgetModel = await monthlyBudgetService.GetMonthlyBudget(month, year);
-            if(appState.monthlyBudgetModel == null)
-            {
-                appState.monthlyBudgetModel.Income = 0;
-                appState.monthlyBudgetModel.Outgoing = 0;
-                appState.monthlyBudgetModel.Remaining = 0;
-            }*/
+           await GetAllMonthlyBudgetsForUser();
+
+           years = GetAvailableYearsForUser();
+           selectedYear = years.LastOrDefault();
+
+           months = GetMonthsForSelectedYear();
+           selectedMonth = months.LastOrDefault();
+
+           appState.monthlyBudgetModel = allMonthlyBudgetsForUser.OrderByDescending(x => x.Year)
+                    .ThenByDescending(x => x.Month)
+                    .FirstOrDefault();
         }
 
-        public async Task GetAvailableYearsForUser() {
+        public void ReloadBudgetForSelectedYear() {
+
+            months = GetMonthsForSelectedYear();
+            selectedMonth = months.FirstOrDefault();
+            appState.monthlyBudgetModel = GetSpecificMonthlyBudget();
 
         }
 
-        public async Task GetAvailableMonthsForSelectedYear() {
+        public void ReloadBudgetForSelectedMonth() {
 
+            appState.monthlyBudgetModel = GetSpecificMonthlyBudget();
+
+        }
+
+        public async Task GetAllMonthlyBudgetsForUser() {
+
+            allMonthlyBudgetsForUser = await monthlyBudgetService.GetAllMonthlyBudgetDatesForUser();
+            
+        }
+        public List<int> GetAvailableYearsForUser() {
+            
+            List<int> yearsWithAMonthlyBudget = allMonthlyBudgetsForUser.OrderBy(x => x.Year)
+            .Select(x => x.Year)
+            .Distinct()
+            .ToList();
+
+            return yearsWithAMonthlyBudget;
+        }
+
+        public MonthlyBudgetModel GetSpecificMonthlyBudget() {
+
+            MonthlyBudgetModel monthlyBudgetRecord = allMonthlyBudgetsForUser.Where(x => x.Year == selectedYear && x.Month == selectedMonth.MonthNumber)
+            .FirstOrDefault();
+
+            return monthlyBudgetRecord;
+        }
+
+        public List<MonthModel> GetMonthsForSelectedYear() {
+
+            List<MonthModel> monthsForYear = allMonthlyBudgetsForUser.Where(x => x.Year == selectedYear)
+            .OrderBy(x => x.Month)
+            .Select(x => 
+                new MonthModel {
+                    MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(x.Month),
+                    MonthNumber = x.Month
+                })
+            .ToList();
+
+            return monthsForYear;
         }
     }
 }

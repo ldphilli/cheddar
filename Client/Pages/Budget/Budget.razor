@@ -16,11 +16,20 @@
             <Header></Header>
             <h2 class="font bold white-heading">Summary</h2>
             <div class="row">
-                @* <div class="col-lg-12 col-xl-12">
-                     <RadzenDropDown AllowClear="true" TValue="string" Class="w-100" 
-                        Data=@(customers.Select(c => c.CompanyName).Distinct())
-                        Change=@(args => OnChange(args, "DropDown")) />
-                </div> *@
+                <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+                    <RadzenCard>
+                        <h4 class="mb-4">Years</h4>
+                        <RadzenDropDown AllowClear="true" Class="w-100" 
+                                        Data=@MonthlyBudgetViewModel.years TValue="int" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedYear" @bind-Value="@MonthlyBudgetViewModel.selectedYear"/>
+                    </RadzenCard>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+                    <RadzenCard>
+                        <h4 class="mb-4">Months</h4>
+                        <RadzenDropDown AllowClear="true" Class="w-100" 
+                                        Data=@MonthlyBudgetViewModel.months TValue="MonthModel" TextProperty="MonthName" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedMonth" @bind-Value="@MonthlyBudgetViewModel.selectedMonth"/>
+                    </RadzenCard>
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-6 col-xl-4">
@@ -99,7 +108,7 @@
     protected override async Task OnInitializedAsync() {
         
         await Task.WhenAll(
-            MonthlyBudgetViewModel.GetLatestMonthlyBudgetForUser(),
+            MonthlyBudgetViewModel.SetupLatestMonthlyBudgetForUser(),
             budget.GetBudgetLineItems(),
             SalaryUpdateViewModel.GetSalaryUpdateItems(),
             budget.GetBudgetSettingsForUser()

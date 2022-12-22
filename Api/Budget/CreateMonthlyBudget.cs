@@ -97,7 +97,7 @@ namespace Cheddar.Function
 
       log.LogInformation("Budget line items found");
       var totalCostOfExpenses = budgetLineItemsForUser.Sum(x => x.Cost);
-      var remainingBudget = budgetSetting.MonthlyIncome - totalCostOfExpenses;
+      var remainingBudget = Math.Round(budgetSetting.MonthlyIncome - totalCostOfExpenses, 2);
 
       // Create and establish values for monthly budget
       MonthlyBudgetModel monthlyBudget = new MonthlyBudgetModel
