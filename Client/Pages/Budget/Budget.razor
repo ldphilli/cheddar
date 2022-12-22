@@ -27,7 +27,7 @@
                     <RadzenCard>
                         <h4 class="mb-4">Months</h4>
                         <RadzenDropDown AllowClear="true" Class="w-100" 
-                                        Data=@MonthlyBudgetViewModel.monthsForYear TValue="MonthModel" TextProperty="MonthName" Change="@MonthlyBudgetViewModel.GetSpecificMonthlyBudget" @bind-Value="@MonthlyBudgetViewModel.selectedMonth"/>
+                                        Data=@MonthlyBudgetViewModel.months TValue="MonthModel" TextProperty="MonthName" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedMonth" @bind-Value="@MonthlyBudgetViewModel.selectedMonth"/>
                     </RadzenCard>
                 </div>
             </div>
