@@ -118,6 +118,7 @@ namespace Cheddar.Function
             Amount = remainingBudget * ((double)x.Percentage / (double)100)
           })
           .ToList(),
+        BudgetLineItemsForMonth = budgetLineItemsForUser.ToList()
       };
 
       //Create monthly budget for user
