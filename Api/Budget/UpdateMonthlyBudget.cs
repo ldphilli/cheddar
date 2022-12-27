@@ -43,14 +43,6 @@ namespace Cheddar.Function
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var item = JsonConvert.DeserializeObject<MonthlyBudgetModel>(requestBody);
 
-                // ItemResponse<MonthlyBudgetModel> response = await container.PatchItemAsync<MonthlyBudgetModel>(
-                //     id: item.Id,
-                //     partitionKey: new PartitionKey(item.Id),
-                //     patchOperations: new[] { PatchOperation.Replace("/Income", item.Income) }
-                // );
-
-                // MonthlyBudgetModel updatedMonthlyBudget = response.Resource;
-                // log.LogInformation($"Income of updated item: {updatedMonthlyBudget.Income}");
                 IReadOnlyList<PatchOperation> patchOperations = new[] { 
                     PatchOperation.Replace("/Income", item.Income),
                     PatchOperation.Replace("/Remaining", item.Remaining)
