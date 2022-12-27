@@ -22,10 +22,10 @@ namespace Cheddar.Function
 
         [FunctionName("UpdateMonthlyBudget")]
         public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = null)] HttpRequest req,
         [CosmosDB(
                 databaseName: DbConfiguration.DBName,
-                containerName: DbConfiguration.BudgetSettingsContainerName,
+                containerName: DbConfiguration.MonthlyBudgetContainerName,
                 Connection = "CosmosDBConnection")] CosmosClient client,
         ILogger log) {
 
@@ -33,19 +33,25 @@ namespace Cheddar.Function
 
                 Console.WriteLine("\n1.6 - Patching a item using its Id");
 
+                if (!req.Headers.TryGetValue("Authorization", out var token))
+                {
+                    return new BadRequestObjectResult("No token found");
+                }
+
                 Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.MonthlyBudgetContainerName);
 
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var item = JsonConvert.DeserializeObject<MonthlyBudgetModel>(requestBody);
 
                 ItemResponse<MonthlyBudgetModel> response = await container.PatchItemAsync<MonthlyBudgetModel>(
-                id: item.Id,
-                partitionKey: new PartitionKey(item.UserId),
-                patchOperations: new[] { PatchOperation.Replace("/Income", item.Income) });
+                    id: item.Id,
+                    partitionKey: new PartitionKey(item.Id),
+                    patchOperations: new[] { PatchOperation.Replace("/Income", item.Income) }
+                );
 
                 MonthlyBudgetModel updatedMonthlyBudget = response.Resource;
                 log.LogInformation($"Income of updated item: {updatedMonthlyBudget.Income}");
-                return new OkObjectResult(updatedMonthlyBudget);
+                return new OkObjectResult("Success!");
             }
             catch(CosmosException cosmosException) {
                 return new BadRequestObjectResult(cosmosException);
