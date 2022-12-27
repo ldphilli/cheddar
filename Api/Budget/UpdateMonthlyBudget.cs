@@ -43,18 +43,71 @@ namespace Cheddar.Function
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var item = JsonConvert.DeserializeObject<MonthlyBudgetModel>(requestBody);
 
-                ItemResponse<MonthlyBudgetModel> response = await container.PatchItemAsync<MonthlyBudgetModel>(
-                    id: item.Id,
-                    partitionKey: new PartitionKey(item.Id),
-                    patchOperations: new[] { PatchOperation.Replace("/Income", item.Income) }
-                );
+                IReadOnlyList<PatchOperation> patchOperations = new[] { 
+                    PatchOperation.Replace("/Income", item.Income),
+                    PatchOperation.Replace("/Remaining", item.Remaining)
+                };
 
-                MonthlyBudgetModel updatedMonthlyBudget = response.Resource;
-                log.LogInformation($"Income of updated item: {updatedMonthlyBudget.Income}");
+                using (Stream stream = ToStream<IReadOnlyList<PatchOperation>>(patchOperations))
+                {
+                    using (ResponseMessage responseMessage = await container.PatchItemStreamAsync(
+                        id: item.Id,
+                        partitionKey: new PartitionKey(item.Id),
+                        patchOperations: patchOperations))
+                    {
+                        // Item stream operations do not throw exceptions for better performance
+                        if (responseMessage.IsSuccessStatusCode)
+                        {
+                            MonthlyBudgetModel streamResponse = FromStream<MonthlyBudgetModel>(responseMessage.Content);
+                            Console.WriteLine($"\n1.6.3 - Item Patch via stream {streamResponse.Id}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Patch item from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
+                        }
+                    }
+                }
                 return new OkObjectResult("Success!");
             }
             catch(CosmosException cosmosException) {
                 return new BadRequestObjectResult(cosmosException);
+            }
+        }
+
+        private static Stream ToStream<T>(T input)
+        {
+            MemoryStream streamPayload = new MemoryStream();
+            using (StreamWriter streamWriter = new StreamWriter(streamPayload, encoding: Encoding.Default, bufferSize: 1024, leaveOpen: true))
+            {
+                using (JsonWriter writer = new JsonTextWriter(streamWriter))
+                {
+                    writer.Formatting = Newtonsoft.Json.Formatting.None;
+                    Serializer.Serialize(writer, input);
+                    writer.Flush();
+                    streamWriter.Flush();
+                }
+            }
+
+            streamPayload.Position = 0;
+            return streamPayload;
+        }
+
+        private static T FromStream<T>(Stream stream)
+        {
+            using (stream)
+            {
+                if (typeof(Stream).IsAssignableFrom(typeof(T)))
+                {
+                    return (T)(object)stream;
+                }
+
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
+                    {
+                        return Serializer.Deserialize<T>(jsonTextReader);
+                    }
+                }
             }
         }
     }
