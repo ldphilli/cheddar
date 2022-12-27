@@ -1,7 +1,6 @@
 using Cheddar.Shared.Models;
-using Cheddar.Client.ViewModels;
-using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
+using System.Net.Http
 
 namespace Cheddar.Client.Services {
     public class MonthlyBudgetService {
@@ -29,6 +28,12 @@ namespace Cheddar.Client.Services {
             Console.WriteLine("Entered into monthly budget service GetAllMonthlyBudgets");
             string request = String.Concat("api/GetAllMonthlyBudgets");
             return await ApiClient.GetFromJsonAsync<List<MonthlyBudgetModel>>(request);
+        }
+
+        public async Task UpdateMonthlyBudgetForUser(MonthlyBudgetModel monthlyBudgetModelToUpdate) {
+            Console.WriteLine("Entered into monthly budget service UpdateMonthlyBudgetForUser");
+            string request = String.Concat("api/UpdateMonthlyBudget");
+            await ApiClient.PatchAsJsonAsync<MonthlyBudgetModel>(request, monthlyBudgetModelToUpdate);
         }
     }
 }

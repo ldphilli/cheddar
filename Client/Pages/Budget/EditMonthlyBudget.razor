@@ -1,0 +1,19 @@
+@page "/editmonthlybudget"
+@inject MonthlyBudgetViewModel MonthlyBudgetViewModel
+
+<PageTitle>Budget Settings</PageTitle>
+
+<div class="fluid-container">
+    <h2 class="font bold white-heading">Income</h2>
+    <div class="row">
+        <div class="col-md-6 col-lg-4 p-3">
+            <RadzenCard>
+                <RadzenNumeric TValue="double"
+                    @bind-Value="@MonthlyBudgetViewModel.monthlyBudgetModel.Income" />
+            </RadzenCard>
+            <RadzenButton class="col-xl-3"
+                Click="@(() => MonthlyBudgetViewModel.UpdateMonthlyBudget())"
+                Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+        </div>
+    </div>
+</div>

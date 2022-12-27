@@ -16,19 +16,22 @@
             <Header></Header>
             <h2 class="font bold white-heading">Summary</h2>
             <div class="row">
-                <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+                <div class="col-md-4 col-lg-4 col-xl-3 p-3">
                     <RadzenCard>
                         <h4 class="mb-4">Years</h4>
                         <RadzenDropDown AllowClear="true" Class="w-100" 
                                         Data=@MonthlyBudgetViewModel.years TValue="int" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedYear" @bind-Value="@MonthlyBudgetViewModel.selectedYear"/>
                     </RadzenCard>
                 </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+                <div class="col-md-4 col-lg-4 col-xl-3 p-3">
                     <RadzenCard>
                         <h4 class="mb-4">Months</h4>
                         <RadzenDropDown AllowClear="true" Class="w-100" 
                                         Data=@MonthlyBudgetViewModel.months TValue="MonthModel" TextProperty="MonthName" Change="@MonthlyBudgetViewModel.ReloadBudgetForSelectedMonth" @bind-Value="@MonthlyBudgetViewModel.selectedMonth"/>
                     </RadzenCard>
+                </div>
+                <div class="col-md-64 col-lg-4 col-xl-3 p-3">
+                    <RadzenButton class="col-xl-1 btn-primary" Click="EditMonthlyBudget" Text="Edit budget" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
                 </div>
             </div>
             <div class="row">
@@ -125,5 +128,9 @@
 
     public void EditBudgetSettings() {
         NavManager.NavigateTo("/budget-settings");
+    }
+
+    public void EditMonthlyBudget() {
+        NavManager.NavigateTo("/editmonthlybudget");
     }
 }
