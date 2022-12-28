@@ -4,6 +4,7 @@
 @inject BudgetLineItemViewModel BudgetLineViewModel
 @inject BudgetViewModel budget
 @inject BudgetSettingsViewModel BudgetSettingsViewModel
+@inject ApplicationState ApplicationState
 
 <PageTitle>New Budget Line Item</PageTitle>
 
@@ -41,6 +42,7 @@
         </RadzenCard>
     </div>
     <RadzenButton class="col-xl-3" Click="@(() => budget.AddItemsToContainerAsync(BudgetLineViewModel.bliModel, NavManager))" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton class="col-xl-3" Click="@(() => BudgetLineViewModel.DeleteBudgetLineItem(ApplicationState.BudgetLineItemModel))" Text="Delete" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
 
@@ -50,6 +52,5 @@
 
         await BudgetLineViewModel.GetBudgetCatgories();
         await BudgetLineViewModel.GetPaymentMethods();
-
     }
 }

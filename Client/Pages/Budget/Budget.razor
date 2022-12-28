@@ -4,8 +4,9 @@
 @inject BudgetViewModel budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject IBudgetSettingsService BudgetSettingsService
-@* @inject ApplicationState ApplicationState *@
+@inject ApplicationState ApplicationState
 @inject MonthlyBudgetViewModel MonthlyBudgetViewModel
+@inject BudgetLineItemViewModel BudgetLineItemViewModel
 @* @attribute [Authorize] *@
 
 <PageTitle>Budget</PageTitle>
@@ -93,6 +94,12 @@
                         <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category.Name" Title="Category" Width="140px" />
                         <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod.Name" Title="Payment Method" Width="140px"/>
                         <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
+                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
+                            <Template Context="budgetLineItem">
+                                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => EditBudgetLineItem(budgetLineItem))" @onclick:stopPropagation="true">
+                                </RadzenButton>
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </div>
@@ -119,6 +126,8 @@
     }
 
     public void AddNewBudgetItem() {
+
+        BudgetLineItemViewModel.bliModel = null;
         NavManager.NavigateTo("/newbudgetlineitem");
     }
 
@@ -132,5 +141,11 @@
 
     public void EditMonthlyBudget() {
         NavManager.NavigateTo("/editmonthlybudget");
+    }
+
+    public void EditBudgetLineItem(BudgetLineItemModel budgetLineItemToEdit) {
+
+        BudgetLineItemViewModel.bliModel = budgetLineItemToEdit;
+        NavManager.NavigateTo("/newbudgetlineitem");
     }
 }

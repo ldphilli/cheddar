@@ -96,6 +96,7 @@ namespace Cheddar.Client.ViewModels {
             appState.monthlyBudgetModel.Remaining = Math.Round(appState.monthlyBudgetModel.Income - appState.monthlyBudgetModel.Outgoing, 2);
             await monthlyBudgetService.UpdateMonthlyBudgetForUser(monthlyBudgetModel);
             //ReloadBudgetForSelectedMonth();
+            //nvm.NavigateTo("/budget");
         }
     }
 }
