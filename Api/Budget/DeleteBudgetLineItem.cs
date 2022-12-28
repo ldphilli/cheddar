@@ -21,7 +21,7 @@ namespace Cheddar.Function
 
         [FunctionName("DeleteBudgetLineItem")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             [CosmosDB(
                 databaseName: DbConfiguration.DBName,
                 containerName: DbConfiguration.BudgetLineItemsContainerName,
@@ -38,7 +38,7 @@ namespace Cheddar.Function
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var item = JsonConvert.DeserializeObject<BudgetLineItemModel>(requestBody);
             
-            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.MonthlyBudgetContainerName);
+            Container container = client.GetContainer(DbConfiguration.DBName, DbConfiguration.BudgetLineItemsContainerName);
 
             string userId = manageToken.GetUserIdFromToken(token.ToString().Replace("Bearer ", ""));
             if(string.IsNullOrWhiteSpace(userId))
@@ -49,8 +49,7 @@ namespace Cheddar.Function
 
             try
             {
-                log.LogInformation(item.Id);
-                log.LogInformation(item.UserId);             
+                log.LogInformation("Item being deleted " + item.Id + " by user " + item.UserId);
                 ItemResponse<BudgetLineItemModel> response = await container.DeleteItemAsync<BudgetLineItemModel>(
                 partitionKey: new PartitionKey(item.UserId),
                 id: item.Id);
