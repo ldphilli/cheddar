@@ -145,7 +145,7 @@
 
     public void EditBudgetLineItem(BudgetLineItemModel budgetLineItemToEdit) {
 
-        BudgetLineItemViewModel.bliModel = budgetLineItemToEdit;
-        NavManager.NavigateTo("/newbudgetlineitem");
+        ApplicationState.BudgetLineItemModel = budgetLineItemToEdit;
+        NavManager.NavigateTo("/budgetlineitem/edit");
     }
 }

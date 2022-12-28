@@ -1,4 +1,4 @@
-@page "/newbudgetlineitem"
+@page "/budgetlineitem/edit"
 @inject NavigationManager NavManager
 @using Cheddar.Client.ViewModels
 @inject BudgetLineItemViewModel BudgetLineViewModel
@@ -12,36 +12,37 @@
     <div class="col-md-6 col-lg-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Budget Line Item Name</h4>
-            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@BudgetLineViewModel.bliModel.BudgetLineName" />
+            <RadzenTextBox Placeholder="Apple Music" @bind-Value="@ApplicationState.BudgetLineItemModel.BudgetLineName" />
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Monthly Cost</h4>
-            <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@BudgetLineViewModel.bliModel.Cost" />
+            <RadzenNumeric TValue="double" Placeholder="14.99" @bind-Value="@ApplicationState.BudgetLineItemModel.Cost" />
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">
         <RadzenCard>
             <h4 class="mb-4">Category</h4>
             <RadzenDropDown Class="w-100" 
-                            Data=@BudgetLineViewModel.budgetCategories TValue="BudgetCategoriesModel" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.Category"/>
+                            Data=@BudgetLineViewModel.budgetCategories TValue="BudgetCategoriesModel" TextProperty="Name" @bind-Value="@ApplicationState.BudgetLineItemModel.Category"/>
         </RadzenCard>
     </div>
     <div class="col-md-6 col-lg-4 col-xl-3 p-3">
         <RadzenCard>
             <h4 class="mb-4">Payment Methods</h4>
             <RadzenDropDown AllowClear="true" Class="w-100" 
-                            Data=@BudgetLineViewModel.paymentMethods TValue="PaymentMethodsModel" TextProperty="Name" @bind-Value="@BudgetLineViewModel.bliModel.PaymentMethod"/>
+                            Data=@BudgetLineViewModel.paymentMethods TValue="PaymentMethodsModel" TextProperty="Name" @bind-Value="@ApplicationState.BudgetLineItemModel.PaymentMethod"/>
         </RadzenCard>
     </div>
     <div class="col-lg-6 col-xl-4 p-3">
         <RadzenCard>
             <h4 class="mb-4">Contract End Date</h4>
-            <RadzenDatePicker DateFormat="d" @bind-Value="@BudgetLineViewModel.bliModel.ContractEndDate" />
+            <RadzenDatePicker DateFormat="d" @bind-Value="@ApplicationState.BudgetLineItemModel.ContractEndDate" />
         </RadzenCard>
     </div>
-    <RadzenButton class="col-xl-3" Click="@(() => budget.AddItemsToContainerAsync(BudgetLineViewModel.bliModel, NavManager))" Text="Submit" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton class="col-xl-3" Click="@(() => BudgetLineViewModel.UpdateBudgetLineItem(ApplicationState.BudgetLineItemModel))" Text="Save" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+    <RadzenButton class="col-xl-3" Click="@(() => BudgetLineViewModel.DeleteBudgetLineItem(ApplicationState.BudgetLineItemModel))" Text="Delete" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
 </div>
 
 

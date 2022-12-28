@@ -18,21 +18,18 @@ namespace Cheddar.Client.ViewModels
             ApiClient = apiClient;
             appState = applicationState;
             nvm = navManager;
-            /*if(bliModel == null){
-                bliModel = new BudgetLineItemModel();
-                bliModel.Id = Guid.NewGuid().ToString();
-                Console.WriteLine(bliModel.Id);
-            }*/
-        }
-
-        public async Task CreateBudgetLineItem()
-        {
-
             bliModel = new BudgetLineItemModel();
             bliModel.Id = Guid.NewGuid().ToString();
-            await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", bliModel);
-            nvm.NavigateTo("/budget");
         }
+
+        // public async Task CreateBudgetLineItem()
+        // {
+
+        //     bliModel = new BudgetLineItemModel();
+        //     bliModel.Id = Guid.NewGuid().ToString();
+        //     await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", bliModel);
+        //     nvm.NavigateTo("/budget");
+        // }
 
         public async Task GetBudgetCatgories()
         {
@@ -44,10 +41,18 @@ namespace Cheddar.Client.ViewModels
             paymentMethods = await ApiClient.GetFromJsonAsync<List<PaymentMethodsModel>>("api/GetPaymentMethodsForUser");
         }
 
+        public async Task UpdateBudgetLineItem(BudgetLineItemModel budgetLineItemToUpdate)
+        {
+            Console.WriteLine(budgetLineItemToUpdate.BudgetLineName);
+            await ApiClient.PostAsJsonAsync<BudgetLineItemModel>("api/UpdateBudgetLineItem", budgetLineItemToUpdate);
+            nvm.NavigateTo("/budget");
+        }
+
         public async Task DeleteBudgetLineItem(BudgetLineItemModel budgetLineItemToDelete)
         {
             Console.WriteLine(budgetLineItemToDelete.BudgetLineName);
             await ApiClient.PostAsJsonAsync<BudgetLineItemModel>("api/DeleteBudgetLineItem", budgetLineItemToDelete);
+            nvm.NavigateTo("/budget");
         }
     }
 }

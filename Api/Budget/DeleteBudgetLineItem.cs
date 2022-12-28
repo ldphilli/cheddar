@@ -49,9 +49,10 @@ namespace Cheddar.Function
 
             try
             {
-
+                log.LogInformation(item.Id);
+                log.LogInformation(item.UserId);             
                 ItemResponse<BudgetLineItemModel> response = await container.DeleteItemAsync<BudgetLineItemModel>(
-                partitionKey: new PartitionKey("/UserId"),
+                partitionKey: new PartitionKey(item.UserId),
                 id: item.Id);
 
             }
