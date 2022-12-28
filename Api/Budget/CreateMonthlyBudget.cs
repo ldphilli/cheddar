@@ -115,7 +115,7 @@ namespace Cheddar.Function
             Id = Guid.NewGuid().ToString(),
             UserId = userId,
             CategoryName = x.CategoryName,
-            Amount = remainingBudget * ((double)x.Percentage / (double)100)
+            Amount = Math.Round(remainingBudget * ((double)x.Percentage / (double)100), 2)
           })
           .ToList(),
         BudgetLineItemsForMonth = budgetLineItemsForUser

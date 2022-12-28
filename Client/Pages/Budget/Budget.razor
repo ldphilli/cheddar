@@ -81,9 +81,18 @@
                 </div>
             </div>
             <div class="row">
-                <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
+                <h2 class="font bold white-heading col-xl-3">Expenditure</h2>
                 <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
                 <RadzenButton class="col-xl-1 btn-primary" Click="EditBudgetSettings" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+            </div>
+            <div class="row">
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@MonthlyBudgetViewModel.expenditureCategories" TItem="RemainingExpenditureCategoriesWithAmountModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="RemainingExpenditureCategoriesWithAmountModel" Property="CategoryName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
+                        <RadzenDataGridColumn TItem="RemainingExpenditureCategoriesWithAmountModel" Property="Amount" Title="Amount" Width="140px"  />
+                    </Columns>
+                </RadzenDataGrid>
             </div>
             <div class="row">
                 <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"

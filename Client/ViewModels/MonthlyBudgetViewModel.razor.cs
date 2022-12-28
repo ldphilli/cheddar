@@ -16,6 +16,7 @@ namespace Cheddar.Client.ViewModels {
         public int selectedYear;
         public MonthModel selectedMonth;
         public List<MonthlyBudgetModel> allMonthlyBudgetsForUser;
+        public List<RemainingExpenditureCategoriesWithAmountModel> expenditureCategories;
 
         public MonthlyBudgetViewModel(HttpClient apiClient, NavigationManager navManager, ApplicationState applicationState, MonthlyBudgetService mbService)
         {
@@ -38,6 +39,9 @@ namespace Cheddar.Client.ViewModels {
            appState.monthlyBudgetModel = allMonthlyBudgetsForUser.OrderByDescending(x => x.Year)
                     .ThenByDescending(x => x.Month)
                     .FirstOrDefault();
+
+            expenditureCategories = appState.monthlyBudgetModel.expenditureCategories;
+            Console.WriteLine(expenditureCategories.First().CategoryName);
         }
 
         public void ReloadBudgetForSelectedYear() {
@@ -51,6 +55,9 @@ namespace Cheddar.Client.ViewModels {
         public void ReloadBudgetForSelectedMonth() {
 
             appState.monthlyBudgetModel = GetSpecificMonthlyBudget();
+
+            expenditureCategories = appState.monthlyBudgetModel.expenditureCategories;
+            Console.WriteLine(expenditureCategories.First().CategoryName);
 
         }
 
