@@ -50,7 +50,9 @@
 
     protected override async Task OnInitializedAsync() {
 
-        await BudgetLineViewModel.GetBudgetCatgories();
-        await BudgetLineViewModel.GetPaymentMethods();
+        if(ApplicationState.BudgetLineItemModel == null)
+        {
+            ApplicationState.BudgetLineItemModel = new BudgetLineItemModel();
+        }
     }
 }

@@ -41,7 +41,6 @@ namespace Cheddar.Client.ViewModels {
                     .FirstOrDefault();
 
             expenditureCategories = appState.monthlyBudgetModel.expenditureCategories;
-            Console.WriteLine(expenditureCategories.First().CategoryName);
         }
 
         public void ReloadBudgetForSelectedYear() {
@@ -55,10 +54,6 @@ namespace Cheddar.Client.ViewModels {
         public void ReloadBudgetForSelectedMonth() {
 
             appState.monthlyBudgetModel = GetSpecificMonthlyBudget();
-
-            expenditureCategories = appState.monthlyBudgetModel.expenditureCategories;
-            Console.WriteLine(expenditureCategories.First().CategoryName);
-
         }
 
         public async Task GetAllMonthlyBudgetsForUser() {
@@ -102,8 +97,6 @@ namespace Cheddar.Client.ViewModels {
 
             appState.monthlyBudgetModel.Remaining = Math.Round(appState.monthlyBudgetModel.Income - appState.monthlyBudgetModel.Outgoing, 2);
             await monthlyBudgetService.UpdateMonthlyBudgetForUser(monthlyBudgetModel);
-            //ReloadBudgetForSelectedMonth();
-            //nvm.NavigateTo("/budget");
         }
     }
 }

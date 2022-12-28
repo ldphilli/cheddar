@@ -22,15 +22,6 @@ namespace Cheddar.Client.ViewModels
             bliModel.Id = Guid.NewGuid().ToString();
         }
 
-        // public async Task CreateBudgetLineItem()
-        // {
-
-        //     bliModel = new BudgetLineItemModel();
-        //     bliModel.Id = Guid.NewGuid().ToString();
-        //     await ApiClient.PostAsJsonAsync("api/CreateBudgetLineItem", bliModel);
-        //     nvm.NavigateTo("/budget");
-        // }
-
         public async Task GetBudgetCatgories()
         {
             budgetCategories = await ApiClient.GetFromJsonAsync<List<BudgetCategoriesModel>>("api/GetBudgetCategoriesForUser");
