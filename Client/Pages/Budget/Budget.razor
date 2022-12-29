@@ -4,8 +4,9 @@
 @inject BudgetViewModel budget
 @inject SalaryUpdateViewModel SalaryUpdateViewModel
 @inject IBudgetSettingsService BudgetSettingsService
-@* @inject ApplicationState ApplicationState *@
+@inject ApplicationState ApplicationState
 @inject MonthlyBudgetViewModel MonthlyBudgetViewModel
+@inject BudgetLineItemViewModel BudgetLineItemViewModel
 @* @attribute [Authorize] *@
 
 <PageTitle>Budget</PageTitle>
@@ -80,21 +81,40 @@
                 </div>
             </div>
             <div class="row">
-                <h2 class="font bold white-heading col-xl-3">Budget line items</h2>
+                <h2 class="font bold white-heading col-xl-3">Expenditure</h2>
                 <RadzenButton class="col-xl-1 btn-primary" Click="AddNewBudgetItem" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
                 <RadzenButton class="col-xl-1 btn-primary" Click="EditBudgetSettings" Text="Edit budget settings" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
             </div>
             <div class="row">
-                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                    Data="@budget.budgetLineItems" TItem="BudgetLineItemModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-                    <Columns>
-                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="BudgetLineName" Filterable="false" Title="Line Item Name" Width="70px" TextAlign="TextAlign.Center" />
-                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Cost" Title="Cost" Width="140px"  />
-                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category.Name" Title="Category" Width="140px" />
-                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod.Name" Title="Payment Method" Width="140px"/>
-                        <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="200px" />
-                    </Columns>
-                </RadzenDataGrid>
+                <div class="col-xl-3">
+                    <h3>Remaining money split</h3>
+                    <RadzenDataGrid  AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@MonthlyBudgetViewModel.expenditureCategories" TItem="RemainingExpenditureCategoriesWithAmountModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="RemainingExpenditureCategoriesWithAmountModel" Property="CategoryName" Filterable="false" Title="Line Item Name" Width="100px" TextAlign="TextAlign.Center" />
+                            <RadzenDataGridColumn TItem="RemainingExpenditureCategoriesWithAmountModel" Property="Amount" Title="Amount" Width="70px"  />
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
+                <div class="col-xl-9">
+                    <h3>Budget items for month</h3>
+                    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@budget.budgetLineItems" TItem="BudgetLineItemModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="BudgetLineName" Filterable="false" Title="Line Item Name" Width="120px" TextAlign="TextAlign.Center" />
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Cost" Title="Cost" Width="140px"  />
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="Category.Name" Title="Category" Width="140px" />
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="PaymentMethod.Name" Title="Payment Method" Width="140px"/>
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Property="ContractEndDate" Title="Contract End Date" Width="100px" />
+                            <RadzenDataGridColumn TItem="BudgetLineItemModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="100px">
+                                <Template Context="budgetLineItem">
+                                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => EditBudgetLineItem(budgetLineItem))" @onclick:stopPropagation="true">
+                                    </RadzenButton>
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </div>
             </div>
         </div>
     @* </div> *@
@@ -119,6 +139,8 @@
     }
 
     public void AddNewBudgetItem() {
+
+        BudgetLineItemViewModel.bliModel = null;
         NavManager.NavigateTo("/newbudgetlineitem");
     }
 
@@ -132,5 +154,11 @@
 
     public void EditMonthlyBudget() {
         NavManager.NavigateTo("/editmonthlybudget");
+    }
+
+    public void EditBudgetLineItem(BudgetLineItemModel budgetLineItemToEdit) {
+
+        ApplicationState.BudgetLineItemModel = budgetLineItemToEdit;
+        NavManager.NavigateTo("/budgetlineitem/edit");
     }
 }

@@ -12,5 +12,6 @@ namespace Cheddar.Shared.Models {
         public int Month { get; set; }
         public int Year { get; set; }
         public List<RemainingExpenditureCategoriesWithAmountModel>? expenditureCategories { get; set; }
+        public List<BudgetLineItemModel> BudgetLineItemsForMonth { get; set; }
     }
 }
